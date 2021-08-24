@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myself.workbench.dao.ActivityDao">
+
+    <sql id="activity">
+        id,owner,name,startDate,endDate,cost,description,createTime,createBy,editTime,editBy
+    </sql>
+
+    <!-- 添加市场活动信息 -->
+    <insert id="activityInsert" parameterType="Activity">
+        insert into tbl_activity (<include refid="activity" />) value (#{id},#{owner},#{name},#{startDate},#{endDate},#{cost},#{description},#{createTime},#{createBy},#{editTime},#{editBy})
+    </insert>
+
+    <!-- 按照id查询市场活动信息 -->
+    <select id="selectActivityById" resultType="Activity">
+        select <include refid="activity" /> from tbl_activity where id = #{id}
+    </select>
+
+    <!-- 更新市场活动信息 -->
+    <update id="updateActivity" parameterType="Activity">
+        update tbl_activity set owner = #{owner},name = #{name},startDate = #{startDate},endDate = #{endDate},
+        cost = #{cost},description = #{description},editTime = #{editTime},editBy = #{editBy} where id = #{id}
+    </update>
+
+    <!-- 条件查询的总条数 -->
+    <select id="selectTotalNum" resultType="int">
+        select count(a.id) from tbl_activity a join tbl_user u on a.owner = u.id where 1 = 1
+        <if test="param.queryName != null and param.queryName != ''">
+            and a.name like '%' #{param.queryName} '%'
+        </if>
+        <if test="param.queryOwner != null and param.queryOwner != ''">
+            and u.name like '%' #{param.queryOwner} '%'
+        </if>
+        <if test="param.queryStartTime != null and param.queryStartTime != ''">
+            and a.startDate &gt;= #{param.queryStartTime}
+        </if>
+        <if test="param.queryEndTime != null and param.queryEndTime != ''">
+            and a.endDate &lt;= #{param.queryEndTime}
+        </if>
+    </select>
+
+    <!-- 条件查询的总列表 -->
+    <select id="activityPageQuery" resultType="com.myself.vo.Activity_User">
+        select
+        a.id as actId,a.owner as actOwner,a.name as actName,a.startDate as actStartDate,
+        a.endDate as actEndDate,a.cost as actCost,a.description as actDescription,a.createTime as actCreateTime,
+        a.createBy as actCreateBy,a.editTime as EditTime,a.editBy as actEditBy,u.id as userId,u.name as userName
+        from tbl_activity a join tbl_user u on a.owner = u.id where 1 = 1
+        <if test="param.queryName != null and param.queryName != ''">
+            and a.name like '%' #{param.queryName} '%'
+        </if>
+        <if test="param.queryOwner != null and param.queryOwner != ''">
+            and u.name like '%' #{param.queryOwner} '%'
+        </if>
+        <if test="param.queryStartTime != null and param.queryStartTime != ''">
+            and a.startDate &gt;= #{param.queryStartTime}
+        </if>
+        <if test="param.queryEndTime != null and param.queryEndTime != ''">
+            and a.endDate &lt;= #{param.queryEndTime}
+        </if>
+        order by a.createTime desc limit #{param.pageNo},#{param.pageSize}
+    </select>
+
+    <!-- 删除市场活动信息 -->
+    <delete id="activityDelete">
+        delete from tbl_activity where id = #{id}
+    </delete>
+</mapper>

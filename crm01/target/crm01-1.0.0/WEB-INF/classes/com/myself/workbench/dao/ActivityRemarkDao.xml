@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myself.workbench.dao.ActivityRemarkDao">
+
+    <!-- 删除市场活动备注记录 -->
+    <delete id="activityRemarkDelete">
+        delete from tbl_activity_remark where activityId = #{id}
+    </delete>
+
+    <!-- 跳转备注页面之前先查询市场活动信息(所有者是姓名) -->
+    <select id="selectActivityById" resultType="Activity">
+        select a.id as id,u.name as owner,a.name as name,a.startDate as startDate,a.endDate as endDate,
+        a.cost as cost,a.description as description,a.createTime as createTime,a.createBy as createBy,
+        a.editTime as editTime,a.editBy as editBy
+        from tbl_activity a join tbl_user u on a.owner = u.id where a.id = #{id}
+    </select>
+
+</mapper>

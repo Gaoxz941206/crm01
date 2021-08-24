@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myself.settings.dao.UserDao">
+
+    <sql id="user">
+        select id,loginAct,name,loginPwd,email,expireTime,lockState,deptNo,allowIps,createTime,createBy,editTime,editBy from tbl_user
+    </sql>
+
+    <select id="selectUserById" resultType="User">
+        <include refid="user" /> where loginAct = #{loginAct}
+    </select>
+
+    <select id="selectAllUsers" resultType="User">
+        <include refid="user" />
+    </select>
+
+</mapper>

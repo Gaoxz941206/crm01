@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    此文件是mybatis的主配置文件
+-->
+
+<!--约束文件
+    mybatis-3-config.dtd约束文件名称，特定的
+-->
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!-- 输出日志 -->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <!-- 设置别名：该包下的所有类名就是别名 -->
+    <typeAliases>
+        <package name="com.myself.settings.entity"/>
+        <package name="com.myself.workbench.entity"/>
+    </typeAliases>
+
+    <mappers>
+        <!-- 一次性加载该包下的所有xml文件 -->
+        <package name="com.myself.settings.dao"/>
+        <package name="com.myself.workbench.dao"/>
+    </mappers>
+</configuration>
