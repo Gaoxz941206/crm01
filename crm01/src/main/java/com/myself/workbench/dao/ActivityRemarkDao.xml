@@ -6,6 +6,10 @@
 
 <mapper namespace="com.myself.workbench.dao.ActivityRemarkDao">
 
+    <sql id="activityRemark">
+        id,noteContent,createTime,createBy,editTime,editBy,editFlag,activityId
+    </sql>
+
     <!-- 删除市场活动备注记录 -->
     <delete id="activityRemarkDelete">
         delete from tbl_activity_remark where activityId = #{id}
@@ -17,6 +21,11 @@
         a.cost as cost,a.description as description,a.createTime as createTime,a.createBy as createBy,
         a.editTime as editTime,a.editBy as editBy
         from tbl_activity a join tbl_user u on a.owner = u.id where a.id = #{id}
+    </select>
+
+    <!-- 根据市场活动id查询备注列表 -->
+    <select id="selectRemarksById" resultType="ActivityRemark">
+        select <include refid="activityRemark" /> from tbl_activity_remark where activityId = #{id}
     </select>
 
 </mapper>

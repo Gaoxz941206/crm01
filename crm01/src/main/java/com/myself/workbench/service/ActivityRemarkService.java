@@ -1,6 +1,9 @@
 package com.myself.workbench.service;
 
 import com.myself.workbench.entity.Activity;
+import com.myself.workbench.entity.ActivityRemark;
+
+import java.util.List;
 
 public interface ActivityRemarkService {
     /**
@@ -9,4 +12,11 @@ public interface ActivityRemarkService {
      * @return
      */
     Activity selectActivityById(String id);
+
+    /**
+     * 备注页面加载时，根据id查询备注列表
+     * @param id
+     * @return
+     */
+    List<ActivityRemark> selectRemarksById(String id);
 }
