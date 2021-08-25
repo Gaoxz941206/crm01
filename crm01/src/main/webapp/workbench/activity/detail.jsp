@@ -8,15 +8,14 @@ To change this template use File | Settings | File Templates.
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 String path = request.getScheme()+"://"+
-request.getServerName()+":"+
-request.getServerPort()+
-request.getContextPath()+"/";
+              request.getServerName()+":"+
+              request.getServerPort()+
+              request.getContextPath()+"/";
 %>
 <html>
 <head>
-	<base href="<%=path%>">
-<meta charset="UTF-8">
-
+    <meta charset="UTF-8">
+        <base href="<%=path%>">
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
@@ -57,10 +56,9 @@ request.getContextPath()+"/";
 
 		//点击编辑按钮弹出“修改市场活动”模态窗口
 		$("#editActivityBtn").click(function () {
-			var actId = $("#activityId").val();
 			$.ajax({
 				url:"activity/selectById",
-				data:{id:actId},
+				data:{id:"${activity.id}"},
 				type:"get",
 				dataType:"json",
 				success:function (result) {
@@ -134,17 +132,17 @@ request.getContextPath()+"/";
 			success:function (result) {
 				var htmltext = "";
 				$.each(result,function (num,value) {
-					htmltext += "<div class='remarkDiv' style='height: 60px;'>";
-					htmltext += 	"<img title='${activity.owner}' src='image/user-thumbnail.png' style='width: 30px; height:30px;'>";
-					htmltext += 	"<div style='position: relative; top: -40px; left: 40px;'>";
-					htmltext += 		"<h5>"+value.noteContent+"</h5>";
-					htmltext += 		"<font color='gray'>市场活动</font> <font color='gray'>-</font> <b>${activity.name}</b> <small style='color: gray;'>"+(value.editFlag === "0" ? value.createTime+"  由  "+value.createBy+" 创建" : value.editTime+"  由  "+value.editBy+" 修改")+"</small>";
-					htmltext += 		"<div style='position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;'>";
-					htmltext += 		"<a class='myHref' href='javascript:void(0);'><span class='glyphicon glyphicon-edit' style='font-size: 20px; color: #00FF00;'></span></a> &nbsp;&nbsp;&nbsp;&nbsp;";
-					htmltext += 		"<a class='myHref' href='javascript:void(0);'><span class='glyphicon glyphicon-remove' style='font-size: 20px; color: #FF0000;'></span></a>";
-					htmltext += 		"</div>";
-					htmltext += 	"</div>";
-					htmltext += "</div>";
+					htmltext += '<div class="remarkDiv" style="height: 60px;">';
+					htmltext += 	'<img title="${activity.owner}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+					htmltext += 	'<div style="position: relative; top: -40px; left: 40px;">';
+					htmltext += 		'<h5>'+value.noteContent+'</h5>';
+					htmltext += 		'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;">'+(value.editFlag === "0" ? value.createTime+"  由  "+value.createBy+" 创建" : value.editTime+"  由  "+value.editBy+" 修改")+"</small>";
+					htmltext += 		'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+					htmltext += 		'<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #00FF00;"></span></a> &nbsp;&nbsp;&nbsp;&nbsp;';
+					htmltext += 		'<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+					htmltext += 		'</div>';
+					htmltext += 	'</div>';
+					htmltext += '</div>';
 				});
 				$("#remarkDiv").before(htmltext);
 			}
