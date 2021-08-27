@@ -8,7 +8,7 @@ import java.util.List;
 public interface ActivityRemarkDao {
     /**
      * 删除市场活动同时删除备注信息
-     * @param id
+     * @param id   备注表中activityId
      * @return
      */
     int activityRemarkDelete(String id);
@@ -27,4 +27,10 @@ public interface ActivityRemarkDao {
      */
     List<ActivityRemark> selectRemarksById(String id);
 
+    /**
+     * 删除备注
+     * @param id    备注的id
+     * @return
+     */
+    int deleteRemark(String id);
 }

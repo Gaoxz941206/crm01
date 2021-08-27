@@ -15,10 +15,10 @@ String path = request.getScheme()+"://"+
 <html>
 <head>
     <meta charset="UTF-8">
-        <base href="<%=path%>">
-<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+    <base href="<%=path%>">
+    <link type="text/css" rel="stylesheet" href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" />
+    <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+    <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 	//默认情况下取消和保存按钮是隐藏的
@@ -114,12 +114,12 @@ String path = request.getScheme()+"://"+
 		//页面加载完毕后执行备注列表查询
 		queryRemarkList();
 		//处理备注的编辑和删除按钮
-        $("#remarkBody").on("mouseover","remarkDiv",function () {
+        $("#remarkBody").on("mouseover",".remarkDiv",function () {
             $(this).children("div").children("div").show();
-        })
-        $("#remarkBody").on("mouseout","remarkDiv",function () {
+        });
+        $("#remarkBody").on("mouseout",".remarkDiv",function () {
             $(this).children("div").children("div").hide();
-        })
+        });
 	});
 
 	//根据id查询备注列表
@@ -130,25 +130,42 @@ String path = request.getScheme()+"://"+
 			type:"get",
 			dataType:"json",
 			success:function (result) {
-				var htmltext = "";
+                var htmlText = "";
 				$.each(result,function (num,value) {
-					htmltext += '<div class="remarkDiv" style="height: 60px;">';
-					htmltext += 	'<img title="${activity.owner}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
-					htmltext += 	'<div style="position: relative; top: -40px; left: 40px;">';
-					htmltext += 		'<h5>'+value.noteContent+'</h5>';
-					htmltext += 		'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;">'+(value.editFlag === "0" ? value.createTime+"  由  "+value.createBy+" 创建" : value.editTime+"  由  "+value.editBy+" 修改")+"</small>";
-					htmltext += 		'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
-					htmltext += 		'<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #00FF00;"></span></a> &nbsp;&nbsp;&nbsp;&nbsp;';
-					htmltext += 		'<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
-					htmltext += 		'</div>';
-					htmltext += 	'</div>';
-					htmltext += '</div>';
+                    htmlText += '<div id="'+value.id+'" class="remarkDiv" style="height: 60px;">';
+                    htmlText += 	'<img title="${activity.owner}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+                    htmlText += 	'<div style="position: relative; top: -40px; left: 40px;">';
+                    htmlText += 		'<h5>'+value.noteContent+'</h5>';
+                    htmlText += 		'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;">'+(value.editFlag === "0" ? value.createTime+"  由  "+value.createBy+" 创建" : value.editTime+"  由  "+value.editBy+" 修改")+"</small>";
+                    htmlText += 		'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+                    htmlText += 		    '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #00FF00;"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;';
+                    htmlText += 		    '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark('+value.id+')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+                    htmlText += 		'</div>';
+                    htmlText += 	'</div>';
+                    htmlText += '</div>';
 				});
-				$("#remarkDiv").before(htmltext);
+				$("#remarkDiv").before(htmlText);
 			}
 		})
 	};
 
+	//删除备注
+    function deleteRemark(id) {
+        $.ajax({
+            url:"activityRemark/delete",
+            data:{id:id},
+            type:"post",
+            dataType:"text",
+            success:function(result){
+                if(result === "删除备注成功"){
+                    alert(result);
+                    $("#"+id).remove();
+                }else {
+                    alert(result);
+                }
+            }
+        });
+    }
 </script>
 
 </head>
@@ -309,8 +326,8 @@ String path = request.getScheme()+"://"+
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 30px; left: 40px;">
-		<div id="remarkBody" class="page-header">
+	<div id="remarkBody" style="position: relative; top: 30px; left: 40px;">
+		<div class="page-header">
 			<h4>备注</h4>
 		</div>
 

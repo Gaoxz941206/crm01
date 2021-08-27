@@ -28,4 +28,9 @@
         select <include refid="activityRemark" /> from tbl_activity_remark where activityId = #{id}
     </select>
 
+    <!-- 删除备注 -->
+    <delete id="deleteRemark">
+        delete from tbl_activity_remark where id = #{id}
+    </delete>
+
 </mapper>

@@ -19,4 +19,11 @@ public interface ActivityRemarkService {
      * @return
      */
     List<ActivityRemark> selectRemarksById(String id);
+
+    /**
+     * 删除备注
+     * @param id 备注的id
+     * @return  成功与否的信息
+     */
+    String deleteRemark(String id);
 }

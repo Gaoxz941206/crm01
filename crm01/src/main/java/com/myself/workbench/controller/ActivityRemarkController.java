@@ -30,4 +30,10 @@ public class ActivityRemarkController {
     public List<ActivityRemark> getRemarksById(String id){
         return service.selectRemarksById(id);
     }
+
+    @RequestMapping(value = "/delete",produces = "text/plain;charset=utf-8")
+    @ResponseBody
+    public String deleteRemark(String id){
+        return service.deleteRemark(id);
+    }
 }

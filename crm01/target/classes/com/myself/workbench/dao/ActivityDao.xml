@@ -62,7 +62,7 @@
         <if test="param.queryEndTime != null and param.queryEndTime != ''">
             and a.endDate &lt;= #{param.queryEndTime}
         </if>
-        order by a.createTime desc limit #{param.pageNo},#{param.pageSize}
+        order by a.startDate desc limit #{param.pageNo},#{param.pageSize}
     </select>
 
     <!-- 删除市场活动信息 -->
