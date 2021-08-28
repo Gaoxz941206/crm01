@@ -15,7 +15,7 @@ public interface ActivityRemarkDao {
 
     /**
      * 跳转备注页面时查询详细信息(所有者是姓名)
-     * @param id
+     * @param id    市场活动的id
      * @return
      */
     Activity selectActivityById(String id);
@@ -33,4 +33,25 @@ public interface ActivityRemarkDao {
      * @return
      */
     int deleteRemark(String id);
+
+    /**
+     *添加备注信息
+     * @param remark
+     * @return
+     */
+    int insertRemark(ActivityRemark remark);
+
+    /**
+     * 修改备注之前先根据备注的id查找备注
+     * @param id    备注的id
+     * @return
+     */
+    ActivityRemark selectRemarkById(String id);
+
+    /**
+     * 修改备注
+     * @param remark
+     * @return
+     */
+    int updateRemark(ActivityRemark remark);
 }

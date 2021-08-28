@@ -135,11 +135,11 @@ String path = request.getScheme()+"://"+
                     htmlText += '<div id="'+value.id+'" class="remarkDiv" style="height: 60px;">';
                     htmlText += 	'<img title="${activity.owner}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
                     htmlText += 	'<div style="position: relative; top: -40px; left: 40px;">';
-                    htmlText += 		'<h5>'+value.noteContent+'</h5>';
-                    htmlText += 		'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;">'+(value.editFlag === "0" ? value.createTime+"  由  "+value.createBy+" 创建" : value.editTime+"  由  "+value.editBy+" 修改")+"</small>";
+                    htmlText += 		'<h5 id="h'+value.id+'">'+value.noteContent+'</h5>';
+                    htmlText += 		'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small id="s'+value.id+'" style="color: gray;">'+(value.editFlag === "0" ? value.createTime+"  由  "+value.createBy+" 创建" : value.editTime+"  由  "+value.editBy+" 修改")+"</small>";
                     htmlText += 		'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
-                    htmlText += 		    '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #00FF00;"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;';
-                    htmlText += 		    '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark('+value.id+')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+                    htmlText += 		    '<a class="myHref" href="javascript:void(0);" onclick="editRemark(\''+value.id+'\')"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #00FF00;"></span></a>'+'&nbsp;&nbsp;&nbsp;&nbsp;';
+                    htmlText += 		    '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\''+value.id+'\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
                     htmlText += 		'</div>';
                     htmlText += 	'</div>';
                     htmlText += '</div>';
@@ -165,6 +165,89 @@ String path = request.getScheme()+"://"+
                 }
             }
         });
+    };
+
+    //添加备注
+    function saveRemark(){
+        var remarkText = $.trim($("#remark").val());
+        if(remarkText === "" || remarkText === null){
+            alert("备注信息不能为空");
+        }else{
+            $.ajax({
+                url:"activityRemark/insert",
+                data:{
+                    activityId:"${activity.id}",
+                    noteContent:remarkText
+                },
+                type:"post",
+                dataType:"json",
+                success:function (result) {
+                    if(result.success){
+                        var htmlText = "";
+                        htmlText += '<div id="'+result.remark.id+'" class="remarkDiv" style="height: 60px;">';
+                        htmlText += 	'<img title="${activity.owner}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+                        htmlText += 	'<div style="position: relative; top: -40px; left: 40px;">';
+                        htmlText += 		'<h5 id="h'+result.remark.id+'">'+result.remark.noteContent+'</h5>';
+                        htmlText += 		'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small id="s'+result.remark.id+'" style="color: gray;">'+(result.remark.createTime+"  由  "+result.remark.createBy+" 创建")+'</small>';
+                        htmlText += 		'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+                        htmlText += 		    '<a class="myHref" href="javascript:void(0);" onclick="editRemark(\''+result.remark.id+'\')"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #00FF00;"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;';
+                        htmlText += 		    '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\''+result.remark.id+'\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+                        htmlText += 		'</div>';
+                        htmlText += 	'</div>';
+                        htmlText += '</div>';
+                        $("#remarkDiv").before(htmlText);
+                        $("#remark").val("");
+                        alert("添加备注成功");
+                    }else {
+                        alert("添加备注失败");
+                    }
+                }
+            })
+        }
+    }
+
+    //修改备注信息之前弹出模态窗口
+    function  editRemark(id) {
+        $.ajax({
+            url:"activityRemark/selectRemarkById",
+            data:{id:id},
+            type:"get",
+            dataType:"json",
+            success:function (result) {
+                $("#remarkId").val(id);
+                $("#noteContent").val(result.noteContent);
+            }
+        });
+        $("#editRemarkModal").modal("show");
+    }
+
+    //修改备注信息
+    function remarkUpdate(){
+        var id = $.trim($("#remarkId").val());
+        var noteContent = $.trim($("#noteContent").val());
+        if(noteContent === "" || noteContent === null){
+            alert("备注内容不能为空");
+        }else {
+            $.ajax({
+                url:"activityRemark/update",
+                data:{
+                    id:id,
+                    noteContent:noteContent
+                },
+                type:"post",
+                dataType:"json",
+                success:function(result){
+                    if(result.success){
+                        $("#h"+id).html(result.remark.noteContent);
+                        $("#s"+id).html(result.remark.editTime+" 由 "+result.remark.editBy+" 修改");
+                        $("#editRemarkModal").modal("hide");
+                    }else {
+                        $("#editRemarkModal").modal("hide");
+                        alert("备注修改失败");
+                    }
+                }
+            })
+        }
     }
 </script>
 
@@ -195,7 +278,7 @@ String path = request.getScheme()+"://"+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+                    <input type="button" class="btn btn-primary" id="updateRemarkBtn" onclick="remarkUpdate()" value="更新">
                 </div>
             </div>
         </div>
@@ -335,8 +418,8 @@ String path = request.getScheme()+"://"+
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
-					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<input id="cancelBtn" type="button" class="btn btn-default" value="取消">
+					<input type="button" class="btn btn-primary" onclick="saveRemark()" value="保存">
 				</p>
 			</form>
 		</div>

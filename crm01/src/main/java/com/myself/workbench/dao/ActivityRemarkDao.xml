@@ -25,12 +25,28 @@
 
     <!-- 根据市场活动id查询备注列表 -->
     <select id="selectRemarksById" resultType="ActivityRemark">
-        select <include refid="activityRemark" /> from tbl_activity_remark where activityId = #{id}
+        select <include refid="activityRemark" /> from tbl_activity_remark where activityId = #{id} order by createTime desc
     </select>
 
     <!-- 删除备注 -->
     <delete id="deleteRemark">
         delete from tbl_activity_remark where id = #{id}
     </delete>
+
+    <!-- 添加备注信息 -->
+    <insert id="insertRemark" parameterType="ActivityRemark">
+        insert into tbl_activity_remark (id,noteContent,createTime,createBy,editFlag,activityId)
+        value (#{id},#{noteContent},#{createTime},#{createBy},#{editFlag},#{activityId})
+    </insert>
+
+    <!-- 根据备注的id查找备注信息 -->
+    <select id="selectRemarkById" resultType="ActivityRemark">
+        select <include refid="activityRemark" /> from tbl_activity_remark where id = #{id}
+    </select>
+
+    <!-- 修改备注 -->
+    <update id="updateRemark">
+        update tbl_activity_remark set noteContent = #{noteContent},editTime = #{editTime},editBy = #{editBy},editFlag = #{editFlag} where id = #{id}
+    </update>
 
 </mapper>
