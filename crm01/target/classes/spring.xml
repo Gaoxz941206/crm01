@@ -20,7 +20,9 @@
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-        <property name="basePackage" value="com.myself.settings.dao,com.myself.workbench.dao" />
+        <property name="basePackage" value="com.myself.settings.dao,
+                                            com.myself.workbench.dao,
+                                            com.myself.clue.dao" />
     </bean>
 
     <context:component-scan base-package="com.myself.settings.service.impl,com.myself.workbench.service.impl" />

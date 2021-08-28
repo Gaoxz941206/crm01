@@ -20,11 +20,13 @@
     <typeAliases>
         <package name="com.myself.settings.entity"/>
         <package name="com.myself.workbench.entity"/>
+        <package name="com.myself.clue.entity"/>
     </typeAliases>
 
     <mappers>
         <!-- 一次性加载该包下的所有xml文件 -->
         <package name="com.myself.settings.dao"/>
         <package name="com.myself.workbench.dao"/>
+        <package name="com.myself.clue.dao"/>
     </mappers>
 </configuration>
