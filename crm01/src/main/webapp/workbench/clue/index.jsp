@@ -32,6 +32,8 @@
 
         });
 
+        //分页查询
+
     </script>
 </head>
 <body>
@@ -498,7 +500,7 @@
         </div>
 
         <div style="height: 50px; position: relative;top: 60px;">
-            <div>
+            <%--<div>
                 <button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
             </div>
             <div class="btn-group" style="position: relative;top: -34px; left: 110px;">
@@ -529,8 +531,24 @@
                         <li class="disabled"><a href="#">末页</a></li>
                     </ul>
                 </nav>
+            </div>--%>
+
+            <div style="height: 50px; position: relative;top: 30px;" align="center">
+                第&nbsp;<span style="width: 30px" id="pageNoSpan"></span>&nbsp;页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                每页&nbsp;<input style="width: 30px" type="text" id="pageSize">&nbsp;条&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                共&nbsp;<span style="width: 30px" id="totalSizeSpan"></span> &nbsp;条记录&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                共&nbsp;<span style="width: 30px" id="totalPageSpan"></span> &nbsp;页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                跳转至第&nbsp;<input style="width: 30px" type="text" id="pageNo">&nbsp;页&nbsp;&nbsp;&nbsp;
+                <input type="button" id="goBtn" value="跳转">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="button" id="firstBtn" value="首页" style="cursor: pointer">
+                <input type="button" id="perBtn" value="上一页" style="cursor: pointer">
+                <input type="button" id="nextBtn" value="下一页" style="cursor: pointer">
+                <input type="button" id="lastBtn" value="尾页" style="cursor: pointer">
             </div>
+
         </div>
+
+
 
     </div>
 

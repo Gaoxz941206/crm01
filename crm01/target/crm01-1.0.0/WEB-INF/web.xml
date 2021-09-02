@@ -22,6 +22,7 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+    <!-- spring框架 -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
@@ -29,7 +30,11 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:spring.xml</param-value>
     </context-param>
-
+    <!-- 加载数据字典的监听器 -->
+    <listener>
+        <listener-class>com.myself.listener.SysInitListener</listener-class>
+    </listener>
+    
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

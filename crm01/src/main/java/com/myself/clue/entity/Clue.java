@@ -1,26 +1,26 @@
 package com.myself.clue.entity;
 
 public class Clue {
-    private String id;
-    private String fullName;
-    private String appellation;
-    private String owner;
-    private String company;
-    private String job;
-    private String email;
-    private String phone;
-    private String website;
-    private String mPhone;
-    private String state;
-    private String source;
-    private String createBy;
-    private String createTime;
-    private String editBy;
-    private String editTime;
-    private String description;
-    private String contactSummary;
-    private String nextContactTime;
-    private String address;
+    private String id;    //主键
+    private String fullName;   //
+    private String appellation;   //
+    private String owner;     //
+    private String company;   //
+    private String job;   //
+    private String email;     //
+    private String phone;     //
+    private String website;   //
+    private String mPhone;    //
+    private String state;     //
+    private String source;    //
+    private String createBy;      //
+    private String createTime;    //
+    private String editBy;    //
+    private String editTime;      //
+    private String description;   //
+    private String contactSummary;    //
+    private String nextContactTime;   //
+    private String address;   //
 
     public Clue() {
     }

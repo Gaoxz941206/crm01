@@ -21,6 +21,7 @@
         <package name="com.myself.settings.entity"/>
         <package name="com.myself.workbench.entity"/>
         <package name="com.myself.clue.entity"/>
+        <package name="com.myself.dic.entity"/>
     </typeAliases>
 
     <mappers>
@@ -28,5 +29,6 @@
         <package name="com.myself.settings.dao"/>
         <package name="com.myself.workbench.dao"/>
         <package name="com.myself.clue.dao"/>
+        <package name="com.myself.dic.dao"/>
     </mappers>
 </configuration>
