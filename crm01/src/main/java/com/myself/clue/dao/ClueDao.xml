@@ -6,4 +6,62 @@
 
 <mapper namespace="com.myself.clue.dao.ClueDao">
 
+    <sql id="clue">
+        select id,fullName,appellation,owner,company,job,email,phone,website,mPhone,state,source,
+        createBy,createTime,editBy,editTime,description,contactSummary,nextContactTime,address from tbl_clue
+    </sql>
+
+    <!-- 添加查询总条数 -->
+    <select id="getTotalSize" resultType="int">
+        select count(id) from tbl_clue where 1 = 1
+        <if test="fullName != '' and fullName != null">
+            and fullName like '%' #{fullName} '%'
+        </if>
+        <if test="company != '' and company != null">
+            and company like '%' #{company} '%'
+        </if>
+        <if test="phone != '' and phone != null">
+            and phone like '%' #{phone} '%'
+        </if>
+        <if test="source != '' and source != null">
+            and source = #{source}
+        </if>
+        <if test="owner != '' and owner != null">
+            and owner like '%' #{owner} '%'
+        </if>
+        <if test="mPhone != '' and mPhone != null">
+            and mPhone like '%' #{mPhone} '%'
+        </if>
+        <if test="state != '' and state != null">
+            and state = #{state}
+        </if>
+    </select>
+
+    <!-- 条件查询分页列表 -->
+    <select id="selectPage" resultType="Clue">
+        <include refid="clue" /> where 1 = 1
+        <if test="fullName != '' and fullName != null">
+            and fullName like '%' #{fullName} '%'
+        </if>
+        <if test="company != '' and company != null">
+            and company like '%' #{company} '%'
+        </if>
+        <if test="phone != '' and phone != null">
+            and phone like '%' #{phone} '%'
+        </if>
+        <if test="source != '' and source != null">
+            and source = #{source}
+        </if>
+        <if test="owner != '' and owner != null">
+            and owner like '%' #{owner} '%'
+        </if>
+        <if test="mPhone != '' and mPhone != null">
+            and mPhone like '%' #{mPhone} '%'
+        </if>
+        <if test="state != '' and state != null">
+            and state = #{state}
+        </if>
+        order by createTime desc limit #{pageNo},#{pageSize}
+    </select>
+
 </mapper>

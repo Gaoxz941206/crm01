@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     String path = request.getScheme()+"://"+
                   request.getServerName()+":"+
@@ -25,15 +26,97 @@
     <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
     <script type="text/javascript">
-
         $(function(){
+            //页面加载时查询
+            ajaxPageQuery(1,5);
 
+            //点击查询按钮查询
+            $("#queryBtn").click(function () {
+                var pageNo = $.trim($("#pageNo").val());
+                var pageSize = $.trim($("#pageSize").val());
+                ajaxPageQuery(pageNo,pageSize);
+            });
 
-
+            //弹出创建模态窗口之前，先查询所有者
+            $("#addClueBtn").click(function () {
+                $.ajax({
+                    url:"user/selectAll",
+                    type:"get",
+                    dataType: "json",
+                    success:function (result) {
+                        var htmlText = "";
+                        $("#create-clueOwner").html(htmlText);
+                        $.each(result,function (i,n) {
+                            htmlText += '<option value="'+n.id+'">'+n.name+'</option>';
+                        });
+                        $("#create-clueOwner").html(htmlText);
+                        $("#create-clueOwner").val("${user.id}");
+                    }
+                });
+                $("#createClueModal").modal("show");
+            });
         });
 
         //分页查询
-
+        function ajaxPageQuery(pageNo,pageSize) {
+            //$("input[type='checkbox']").prop("checked",false);	//刷新后复选框取消
+            var fullName = $.trim($("#searchFullName").val());
+            var company = $.trim($("#searchCompany").val());
+            var phone = $.trim($("#searchPhone").val());
+            var source = $.trim($("#searchSource").val());
+            var owner = $.trim($("#searchOwner").val());
+            var mPhone = $.trim($("#searchMPhone").val());
+            var state = $.trim($("#searchState").val());
+            if(pageNo === "" || pageNo === null || parseInt(pageNo) <= 0){
+                pageNo = 1;
+            }
+            if(pageSize === "" || pageSize === null || parseInt(pageSize) <= 0){
+                pageSize = 5;
+            }
+            if(pageSize > 20){
+                pageSize = 20;
+            }
+            $.ajax({
+                url:"clue/selectPage",
+                data:{
+                    fullName:fullName,
+                    company:company,
+                    phone:phone,
+                    source:source,
+                    owner:owner,
+                    mPhone:mPhone,
+                    state:state,
+                    pageNo:pageNo,
+                    pageSize:pageSize
+                },
+                type:"get",
+                dataType:"json",
+                success:function (result) {
+                    var htmlText = "";
+                    $("#tbody").html(htmlText);
+                    $.each(result.list,function (i,n) {
+                        htmlText += '<tr>';
+                        htmlText +=     '<td><input type="checkbox" /></td>';
+                        htmlText +=         '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.jsp\';">'+n.fullName+n.appellation+'</a></td>';
+                        htmlText +=     '<td>'+n.company+'</td>';
+                        htmlText +=     '<td>'+n.phone+'</td>';
+                        htmlText +=     '<td>'+n.mPhone+'</td>';
+                        htmlText +=     '<td>'+n.source+'</td>';
+                        htmlText +=     '<td>'+n.createBy+'</td>';
+                        htmlText +=     '<td>'+n.state+'</td>';
+                        htmlText += '</tr>';
+                    });
+                    $("#tbody").html(htmlText);
+                    $("#pageNoSpan").html(result.pageNo);
+                    $("#pageSize").val(result.pageSize);
+                    $("#totalSizeSpan").html(result.totalSize);
+                    var totalPage = (result.totalSize) % (result.pageSize) === 0 ?
+                        parseInt(result.totalSize / result.pageSize) :
+                        (parseInt(result.totalSize / result.pageSize) + 1);
+                    $("#totalPageSpan").html(totalPage);
+                }
+            })
+        };
     </script>
 </head>
 <body>
@@ -55,9 +138,7 @@
                         <label for="create-clueOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="create-clueOwner">
-                                <option>zhangsan</option>
-                                <option>lisi</option>
-                                <option>wangwu</option>
+
                             </select>
                         </div>
                         <label for="create-company" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
@@ -71,11 +152,9 @@
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="create-call">
                                 <option></option>
-                                <option>先生</option>
-                                <option>夫人</option>
-                                <option>女士</option>
-                                <option>博士</option>
-                                <option>教授</option>
+                                <c:forEach items="${applicationScope.map.appellation}" var="list" varStatus="status">
+                                    <option value="${list.value}">${list.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
                         <label for="create-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
@@ -114,14 +193,10 @@
                         <label for="create-status" class="col-sm-2 control-label">线索状态</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="create-status">
-                                <option></option>
-                                <option>试图联系</option>
-                                <option>将来联系</option>
-                                <option>已联系</option>
-                                <option>虚假线索</option>
-                                <option>丢失线索</option>
-                                <option>未联系</option>
-                                <option>需要条件</option>
+                                <option value=""></option>
+                                <c:forEach items="${applicationScope.map.clueState}" var="list" varStatus="status">
+                                    <option value="${list.value}">${list.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
                     </div>
@@ -130,21 +205,10 @@
                         <label for="create-source" class="col-sm-2 control-label">线索来源</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="create-source">
-                                <option></option>
-                                <option>广告</option>
-                                <option>推销电话</option>
-                                <option>员工介绍</option>
-                                <option>外部介绍</option>
-                                <option>在线商场</option>
-                                <option>合作伙伴</option>
-                                <option>公开媒介</option>
-                                <option>销售邮件</option>
-                                <option>合作伙伴研讨会</option>
-                                <option>内部研讨会</option>
-                                <option>交易会</option>
-                                <option>web下载</option>
-                                <option>web调研</option>
-                                <option>聊天</option>
+                                <option value=""></option>
+                                <c:forEach items="${applicationScope.map.source}" var="list" varStatus="status">
+                                    <option value="${list.value}">${list.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
                     </div>
@@ -169,7 +233,7 @@
                         <div class="form-group">
                             <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="create-nextContactTime">
+                                <input type="text" class="form-control time" id="create-nextContactTime">
                             </div>
                         </div>
                     </div>
@@ -227,12 +291,10 @@
                         <label for="edit-call" class="col-sm-2 control-label">称呼</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="edit-call">
-                                <option></option>
-                                <option selected>先生</option>
-                                <option>夫人</option>
-                                <option>女士</option>
-                                <option>博士</option>
-                                <option>教授</option>
+                                <option value=""></option>
+                                <c:forEach items="${applicationScope.map.appellation}" var="list" varStatus="status">
+                                    <option value="${list.value}">${list.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
                         <label for="edit-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
@@ -271,14 +333,10 @@
                         <label for="edit-status" class="col-sm-2 control-label">线索状态</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="edit-status">
-                                <option></option>
-                                <option>试图联系</option>
-                                <option>将来联系</option>
-                                <option selected>已联系</option>
-                                <option>虚假线索</option>
-                                <option>丢失线索</option>
-                                <option>未联系</option>
-                                <option>需要条件</option>
+                                <option value=""></option>
+                                <c:forEach items="${applicationScope.map.clueState}" var="list" varStatus="status">
+                                    <option value="${list.value}">${list.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
                     </div>
@@ -287,21 +345,10 @@
                         <label for="edit-source" class="col-sm-2 control-label">线索来源</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="edit-source">
-                                <option></option>
-                                <option selected>广告</option>
-                                <option>推销电话</option>
-                                <option>员工介绍</option>
-                                <option>外部介绍</option>
-                                <option>在线商场</option>
-                                <option>合作伙伴</option>
-                                <option>公开媒介</option>
-                                <option>销售邮件</option>
-                                <option>合作伙伴研讨会</option>
-                                <option>内部研讨会</option>
-                                <option>交易会</option>
-                                <option>web下载</option>
-                                <option>web调研</option>
-                                <option>聊天</option>
+                                <option value=""></option>
+                                <c:forEach items="${applicationScope.map.source}" var="list" varStatus="status">
+                                    <option value="${list.value}">${list.value}</option>
+                                </c:forEach>
                             </select>
                         </div>
                     </div>
@@ -372,43 +419,32 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">名称</div>
-                        <input class="form-control" type="text">
+                        <input class="form-control" id="searchFullName" type="text">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">公司</div>
-                        <input class="form-control" type="text">
+                        <input class="form-control" id="searchCompany" type="text">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">公司座机</div>
-                        <input class="form-control" type="text">
+                        <input class="form-control" id="searchPhone" type="text">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">线索来源</div>
-                        <select class="form-control">
-                            <option></option>
-                            <option>广告</option>
-                            <option>推销电话</option>
-                            <option>员工介绍</option>
-                            <option>外部介绍</option>
-                            <option>在线商场</option>
-                            <option>合作伙伴</option>
-                            <option>公开媒介</option>
-                            <option>销售邮件</option>
-                            <option>合作伙伴研讨会</option>
-                            <option>内部研讨会</option>
-                            <option>交易会</option>
-                            <option>web下载</option>
-                            <option>web调研</option>
-                            <option>聊天</option>
+                        <select id="searchSource" class="form-control">
+                            <option value=""></option>
+                            <c:forEach items="${applicationScope.map.source}" var="list" varStatus="status">
+                                <option value="${list.value}">${list.value}</option>
+                            </c:forEach>
                         </select>
                     </div>
                 </div>
@@ -418,7 +454,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">所有者</div>
-                        <input class="form-control" type="text">
+                        <input class="form-control" id="searchOwner" type="text">
                     </div>
                 </div>
 
@@ -427,14 +463,14 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">手机</div>
-                        <input class="form-control" type="text">
+                        <input class="form-control" id="searchMPhone" type="text">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">线索状态</div>
-                        <select class="form-control">
+                        <select id="searchState" class="form-control">
                             <option></option>
                             <option>试图联系</option>
                             <option>将来联系</option>
@@ -447,13 +483,13 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-default">查询</button>
+                <input type="button" id="queryBtn" class="btn btn-default" value="查询">
 
             </form>
         </div>
         <div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 40px;">
             <div class="btn-group" style="position: relative; top: 18%;">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createClueModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+                <button type="button" class="btn btn-primary" id="addClueBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
                 <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
             </div>
@@ -474,27 +510,8 @@
                     <td>线索状态</td>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td><input type="checkbox" /></td>
-                    <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">李四先生</a></td>
-                    <td>动力节点</td>
-                    <td>010-84846003</td>
-                    <td>12345678901</td>
-                    <td>广告</td>
-                    <td>zhangsan</td>
-                    <td>已联系</td>
-                </tr>
-                <tr class="active">
-                    <td><input type="checkbox" /></td>
-                    <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">李四先生</a></td>
-                    <td>动力节点</td>
-                    <td>010-84846003</td>
-                    <td>12345678901</td>
-                    <td>广告</td>
-                    <td>zhangsan</td>
-                    <td>已联系</td>
-                </tr>
+                <tbody id="tbody">
+
                 </tbody>
             </table>
         </div>

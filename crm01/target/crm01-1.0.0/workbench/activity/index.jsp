@@ -163,7 +163,7 @@
 				});
 				//局部刷新查询列表
 				function ajaxPageQuery(pageNo,pageSize) {
-					$("input[type='checkbox']").prop("checked",false);
+					$("input[type='checkbox']").prop("checked",false);	//刷新后复选框取消
 					var queryName = $.trim($("#query_name").val());
 					var queryOwner = $.trim($("#query_owner").val());
 					var queryStartTime = $.trim($("#query_startTime").val());

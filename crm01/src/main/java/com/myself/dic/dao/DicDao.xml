@@ -7,7 +7,11 @@
 <mapper namespace="com.myself.dic.dao.DicDao">
 
     <select id="selectDicCodeTypes" resultType="string">
-        select code from tbl_dic_type group by code
+        select code from tbl_dic_type
+    </select>
+
+    <select id="selectValuesByTypeCode" resultType="DicValue">
+        select id,value,text,orderNo,typeCode from tbl_dic_value where typeCode = #{typeCode}
     </select>
 
 </mapper>

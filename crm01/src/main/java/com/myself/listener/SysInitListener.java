@@ -1,16 +1,19 @@
 package com.myself.listener;
 
+import com.myself.dic.entity.DicValue;
 import com.myself.dic.service.DicService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.List;
+import java.util.Map;
 
+@Controller
 public class SysInitListener implements ServletContextListener {
-
-    @Autowired(required = false)
-    private DicService service;
 
     /**
      * 该方法是用来监听context域对象方法
@@ -18,9 +21,10 @@ public class SysInitListener implements ServletContextListener {
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        List<String> list = service.selectDicCodeTypes();
-        for (String type : list) {
-            System.out.println(type);
-        }
+        ServletContext context = sce.getServletContext();
+        WebApplicationContext application = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
+        DicService service = (DicService) application.getBean("dicServiceImpl");
+        Map<String,List<DicValue>> map = service.selectDicCodeTypes();
+        context.setAttribute("map",map);
     }
 }
