@@ -27,6 +27,16 @@
 
     <script type="text/javascript">
         $(function(){
+            //日期窗口
+            $(".time").datetimepicker({
+                minView:"month",
+                language:"zh-CN",
+                format:"yyyy-mm-dd",
+                autoclose:true,
+                todayBtn:true,
+                pickerPosition:"top-left"
+            });
+
             //页面加载时查询
             ajaxPageQuery(1,5);
 
@@ -47,13 +57,76 @@
                         var htmlText = "";
                         $("#create-clueOwner").html(htmlText);
                         $.each(result,function (i,n) {
-                            htmlText += '<option value="'+n.id+'">'+n.name+'</option>';
+                            htmlText += '<option value="'+n.name+'">'+n.name+'</option>';
                         });
                         $("#create-clueOwner").html(htmlText);
-                        $("#create-clueOwner").val("${user.id}");
+                        $("#create-clueOwner").val("${user.name}");
                     }
                 });
                 $("#createClueModal").modal("show");
+            });
+
+            //执行添加操作
+            $("#insertClueBtn").click(function () {
+                var owner = $.trim($("#create-clueOwner").val());
+                var company = $.trim($("#create-clueCompany").val());
+                var appellation = $.trim($("#create-clueAppellation").val());
+                var fullName = $.trim($("#create-clueFullName").val());
+                var job = $.trim($("#create-clueJob").val());
+                var email = $.trim($("#create-clueEmail").val());
+                var phone = $.trim($("#create-cluePhone").val());
+                var website = $.trim($("#create-clueWebsite").val());
+                var mPhone = $.trim($("#create-clueMPhone").val());
+                var state = $.trim($("#create-clueState").val());
+                var source = $.trim($("#create-clueSource").val());
+                var description = $.trim($("#create-clueDescription").val());
+                var contactSummary = $.trim($("#create-clueContactSummary").val());
+                var nextContactTime = $.trim($("#create-clueNextContactTime").val());
+                var address = $.trim($("#create-clueAddress").val());
+                if(owner === "" || owner === null){
+                    alert("所有者不能为空");
+                }else if(company === "" || company === null){
+                    alert("公司不能为空");
+                }else if(appellation === "" || appellation === null){
+                    alert("称呼不能为空");
+                }else if(fullName === "" || fullName === null){
+                    alert("姓名不能为空");
+                }else {
+                    $.ajax({
+                        url:"clue/insert",
+                        data: {
+                            owner:owner,
+                            company:company,
+                            appellation:appellation,
+                            fullName:fullName,
+                            job:job,
+                            email:email,
+                            phone:phone,
+                            website:website,
+                            mPhone:mPhone,
+                            state:state,
+                            source:source,
+                            description:description,
+                            contactSummary:contactSummary,
+                            nextContactTime:nextContactTime,
+                            address:address
+                        },
+                        type:"post",
+                        dataType:"json",
+                        success:function (result) {
+                            if (result){
+                                document.forms["createClueForm"].reset();
+                                $("#createClueModal").modal("hide");
+                                var pageSize = $.trim($("#pageSize").val());
+                                ajaxPageQuery(1,pageSize);
+                                alert("添加线索成功");
+                            }else {
+                                $("#createClueModal").modal("hide");
+                                alert("添加线索失败");
+                            }
+                        }
+                    })
+                }
             });
         });
 
@@ -97,7 +170,7 @@
                     $.each(result.list,function (i,n) {
                         htmlText += '<tr>';
                         htmlText +=     '<td><input type="checkbox" /></td>';
-                        htmlText +=         '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.jsp\';">'+n.fullName+n.appellation+'</a></td>';
+                        htmlText +=         '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'clue/gotoDetail?id='+n.id+'\';">'+n.fullName+n.appellation+'</a></td>';
                         htmlText +=     '<td>'+n.company+'</td>';
                         htmlText +=     '<td>'+n.phone+'</td>';
                         htmlText +=     '<td>'+n.mPhone+'</td>';
@@ -132,7 +205,7 @@
                 <h4 class="modal-title" id="myModalLabel">创建线索</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" role="form">
+                <form class="form-horizontal" id="createClueForm" role="form">
 
                     <div class="form-group">
                         <label for="create-clueOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
@@ -141,73 +214,73 @@
 
                             </select>
                         </div>
-                        <label for="create-company" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
+                        <label for="create-clueCompany" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-company">
+                            <input type="text" class="form-control" id="create-clueCompany">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="create-call" class="col-sm-2 control-label">称呼</label>
+                        <label for="create-clueAppellation" class="col-sm-2 control-label">称呼</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <select class="form-control" id="create-call">
+                            <select class="form-control" id="create-clueAppellation">
                                 <option></option>
                                 <c:forEach items="${applicationScope.map.appellation}" var="list" varStatus="status">
-                                    <option value="${list.value}">${list.value}</option>
+                                    <option value="${list.value}">${list.text}</option>
                                 </c:forEach>
                             </select>
                         </div>
-                        <label for="create-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
+                        <label for="create-clueFullName" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-surname">
+                            <input type="text" class="form-control" id="create-clueFullName">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="create-job" class="col-sm-2 control-label">职位</label>
+                        <label for="create-clueJob" class="col-sm-2 control-label">职位</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-job">
+                            <input type="text" class="form-control" id="create-clueJob">
                         </div>
-                        <label for="create-email" class="col-sm-2 control-label">邮箱</label>
+                        <label for="create-clueEmail" class="col-sm-2 control-label">邮箱</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-email">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="create-phone" class="col-sm-2 control-label">公司座机</label>
-                        <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-phone">
-                        </div>
-                        <label for="create-website" class="col-sm-2 control-label">公司网站</label>
-                        <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-website">
+                            <input type="text" class="form-control" id="create-clueEmail">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="create-mphone" class="col-sm-2 control-label">手机</label>
+                        <label for="create-cluePhone" class="col-sm-2 control-label">公司座机</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="create-mphone">
+                            <input type="text" class="form-control" id="create-cluePhone">
                         </div>
-                        <label for="create-status" class="col-sm-2 control-label">线索状态</label>
+                        <label for="create-clueWebsite" class="col-sm-2 control-label">公司网站</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <select class="form-control" id="create-status">
+                            <input type="text" class="form-control" id="create-clueWebsite">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="create-clueMPhone" class="col-sm-2 control-label">手机</label>
+                        <div class="col-sm-10" style="width: 300px;">
+                            <input type="text" class="form-control" id="create-clueMPhone">
+                        </div>
+                        <label for="create-clueState" class="col-sm-2 control-label">线索状态</label>
+                        <div class="col-sm-10" style="width: 300px;">
+                            <select class="form-control" id="create-clueState">
                                 <option value=""></option>
                                 <c:forEach items="${applicationScope.map.clueState}" var="list" varStatus="status">
-                                    <option value="${list.value}">${list.value}</option>
+                                    <option value="${list.value}">${list.text}</option>
                                 </c:forEach>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="create-source" class="col-sm-2 control-label">线索来源</label>
+                        <label for="create-clueSource" class="col-sm-2 control-label">线索来源</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <select class="form-control" id="create-source">
+                            <select class="form-control" id="create-clueSource">
                                 <option value=""></option>
                                 <c:forEach items="${applicationScope.map.source}" var="list" varStatus="status">
-                                    <option value="${list.value}">${list.value}</option>
+                                    <option value="${list.value}">${list.text}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -215,9 +288,9 @@
 
 
                     <div class="form-group">
-                        <label for="create-describe" class="col-sm-2 control-label">线索描述</label>
+                        <label for="create-clueDescription" class="col-sm-2 control-label">线索描述</label>
                         <div class="col-sm-10" style="width: 81%;">
-                            <textarea class="form-control" rows="3" id="create-describe"></textarea>
+                            <textarea class="form-control" rows="3" id="create-clueDescription"></textarea>
                         </div>
                     </div>
 
@@ -225,15 +298,15 @@
 
                     <div style="position: relative;top: 15px;">
                         <div class="form-group">
-                            <label for="create-contactSummary" class="col-sm-2 control-label">联系纪要</label>
+                            <label for="create-clueContactSummary" class="col-sm-2 control-label">联系纪要</label>
                             <div class="col-sm-10" style="width: 81%;">
-                                <textarea class="form-control" rows="3" id="create-contactSummary"></textarea>
+                                <textarea class="form-control" rows="3" id="create-clueContactSummary"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
+                            <label for="create-clueNextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control time" id="create-nextContactTime">
+                                <input type="text" class="form-control time" id="create-clueNextContactTime">
                             </div>
                         </div>
                     </div>
@@ -242,9 +315,9 @@
 
                     <div style="position: relative;top: 20px;">
                         <div class="form-group">
-                            <label for="create-address" class="col-sm-2 control-label">详细地址</label>
+                            <label for="create-clueAddress" class="col-sm-2 control-label">详细地址</label>
                             <div class="col-sm-10" style="width: 81%;">
-                                <textarea class="form-control" rows="1" id="create-address"></textarea>
+                                <textarea class="form-control" rows="1" id="create-clueAddress"></textarea>
                             </div>
                         </div>
                     </div>
@@ -253,7 +326,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+                <button type="button" class="btn btn-primary" id="insertClueBtn">保存</button>
             </div>
         </div>
     </div>
@@ -293,7 +366,7 @@
                             <select class="form-control" id="edit-call">
                                 <option value=""></option>
                                 <c:forEach items="${applicationScope.map.appellation}" var="list" varStatus="status">
-                                    <option value="${list.value}">${list.value}</option>
+                                    <option value="${list.value}">${list.text}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -335,7 +408,7 @@
                             <select class="form-control" id="edit-status">
                                 <option value=""></option>
                                 <c:forEach items="${applicationScope.map.clueState}" var="list" varStatus="status">
-                                    <option value="${list.value}">${list.value}</option>
+                                    <option value="${list.value}">${list.text}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -347,7 +420,7 @@
                             <select class="form-control" id="edit-source">
                                 <option value=""></option>
                                 <c:forEach items="${applicationScope.map.source}" var="list" varStatus="status">
-                                    <option value="${list.value}">${list.value}</option>
+                                    <option value="${list.value}">${list.text}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -443,7 +516,7 @@
                         <select id="searchSource" class="form-control">
                             <option value=""></option>
                             <c:forEach items="${applicationScope.map.source}" var="list" varStatus="status">
-                                <option value="${list.value}">${list.value}</option>
+                                <option value="${list.value}">${list.text}</option>
                             </c:forEach>
                         </select>
                     </div>

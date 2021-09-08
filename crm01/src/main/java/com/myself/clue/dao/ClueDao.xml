@@ -11,6 +11,34 @@
         createBy,createTime,editBy,editTime,description,contactSummary,nextContactTime,address from tbl_clue
     </sql>
 
+    <!-- 添加线索 -->
+    <insert id="insertClue" parameterType="Clue">
+        insert into tbl_clue (id,fullName,appellation,owner,company,job,email,phone,website,mPhone,state,source,
+        createBy,createTime,editBy,editTime,description,contactSummary,nextContactTime,address) values (#{id},#{fullName},
+        #{appellation},#{owner},#{company},#{job},#{email},#{phone},#{website},#{mPhone},#{state},#{source},#{createBy},#{createTime},#{editBy},#{editTime},
+        #{description},#{contactSummary},#{nextContactTime},#{address});
+    </insert>
+
+    <!-- 根据id查询线索 -->
+    <select id="selectClueById" resultType="Clue">
+        <include refid="clue" /> where id = #{id}
+    </select>
+
+    <!-- 线索与市场活动联查 -->
+    <select id="linkClueActivity" resultType="string">
+        select activityId from tbl_clue_activity_relation where clueId = #{clueId}
+    </select>
+
+    <!-- 关联市场活动 -->
+    <insert id="bundActivity" parameterType="Clue_Activity">
+        insert into tbl_clue_activity_relation (id,clueId,activityId) values (#{id},#{clueId},#{activityId})
+    </insert>
+
+    <!-- 解除线索和市场活动关联关系 -->
+    <delete id="deleteActivity">
+        delete from tbl_clue_activity_relation where id = #{id}
+    </delete>
+
     <!-- 添加查询总条数 -->
     <select id="getTotalSize" resultType="int">
         select count(id) from tbl_clue where 1 = 1

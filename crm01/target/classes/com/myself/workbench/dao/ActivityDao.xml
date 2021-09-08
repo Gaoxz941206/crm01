@@ -20,11 +20,38 @@
         select <include refid="activity" /> from tbl_activity where id = #{id}
     </select>
 
+    <!-- 按照id查询市场活动信息（所有者是user户名称） -->
+    <select id="selectActivityById_2" resultType="Activity">
+        select car.id as id,u.name as owner,a.name,a.startDate,a.endDate,a.cost,a.description,a.createTime,a.createBy,a.editTime,a.editBy
+        from tbl_activity a join tbl_user u on a.owner = u.id join tbl_clue_activity_relation car on a.id = car.activityId and #{clueId} = car.clueId where a.id = #{actId}
+    </select>
+
     <!-- 更新市场活动信息 -->
     <update id="updateActivity" parameterType="Activity">
         update tbl_activity set owner = #{owner},name = #{name},startDate = #{startDate},endDate = #{endDate},
         cost = #{cost},description = #{description},editTime = #{editTime},editBy = #{editBy} where id = #{id}
     </update>
+
+    <!-- 没有关联市场活动时，按名称模糊查询所有市场活动 -->
+    <select id="selectAllActivities_1" resultType="Activity">
+        select a.id,u.name as owner,a.name,a.startDate,a.endDate,a.cost,a.description,a.createTime,a.createBy,a.editTime,a.editBy from tbl_activity a
+        join tbl_user u on a.owner = u.id where 1 = 1
+        <if test="name != '' and name != null">
+            and a.name like '%' #{name} '%'
+        </if>
+    </select>
+
+    <!-- 有关联市场活动时，按名称模糊查询所有市场活动（排除已关联的） -->
+    <select id="selectAllActivities_2" parameterType="java.util.Map" resultType="Activity">
+        select a.id,u.name as owner,a.name,a.startDate,a.endDate,a.cost,a.description,a.createTime,a.createBy,a.editTime,a.editBy from tbl_activity a
+        join tbl_user u on a.owner = u.id where a.id not in
+        <foreach collection="list" item="actId" open="(" close=")" separator=",">
+            #{actId}
+        </foreach>
+        <if test="name != '' and name != null">
+            and a.name like '%' #{name} '%'
+        </if>
+    </select>
 
     <!-- 条件查询的总条数 -->
     <select id="selectTotalNum" resultType="int">
