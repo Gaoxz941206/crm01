@@ -11,7 +11,7 @@
     </select>
 
     <select id="selectValuesByTypeCode" resultType="DicValue">
-        select id,value,text,orderNo,typeCode from tbl_dic_value where typeCode = #{typeCode}
+        select id,value,text,orderNo,typeCode from tbl_dic_value where typeCode = #{typeCode} order by orderNo
     </select>
 
 </mapper>

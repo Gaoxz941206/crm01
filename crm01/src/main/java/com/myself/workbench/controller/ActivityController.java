@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -84,5 +85,12 @@ public class ActivityController {
     public String updateActivity(HttpSession session,Activity activity){
         User user = (User) session.getAttribute("user");
         return service.updateActivity(activity,user);
+    }
+
+    @RequestMapping(value = "/selectActivityByName",produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public List<Activity> selectActivityByName(String name){
+        List<Activity> list = service.selectActivityByName(name);
+        return list;
     }
 }

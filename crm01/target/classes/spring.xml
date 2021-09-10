@@ -23,13 +23,15 @@
         <property name="basePackage" value="com.myself.settings.dao,
                                             com.myself.workbench.dao,
                                             com.myself.clue.dao,
-                                            com.myself.dic.dao" />
+                                            com.myself.dic.dao,
+                                            com.myself.customer.dao"/>
     </bean>
 
     <context:component-scan base-package="com.myself.settings.service.impl,
                                         com.myself.workbench.service.impl,
                                         com.myself.clue.service.impl,
-                                        com.myself.dic.service.impl" />
+                                        com.myself.dic.service.impl,
+                                        com.myself.customer.service.impl" />
 
     <!-- 开启事务 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

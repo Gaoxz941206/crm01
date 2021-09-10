@@ -70,7 +70,7 @@ public interface ActivityDao {
      * @param name 包含：没有关联市场活动时模糊查询的名称
      * @return
      */
-    List<Activity> selectAllActivities_1(String name);
+    List<Activity> selectAllActivities_1(@Param("name") String name);
 
     /**
      * 按名称模糊查询所有市场活动

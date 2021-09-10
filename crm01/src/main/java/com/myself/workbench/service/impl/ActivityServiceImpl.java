@@ -125,4 +125,14 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return msg;
     }
+
+    /**
+     * 根据市场活动名称模糊查询市场活动列表
+     * @param name
+     * @return
+     */
+    @Override
+    public List<Activity> selectActivityByName(String name) {
+        return dao.selectAllActivities_1(name);
+    }
 }

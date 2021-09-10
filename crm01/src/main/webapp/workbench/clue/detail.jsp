@@ -65,15 +65,17 @@ To change this template use File | Settings | File Templates.
 
         //关联市场活动模态窗口弹出之前
         $("#bundBtn").click(function () {
-        	$("#actName").val("");
+        	$("#searchName").val("");
             bundActivity();
             $("#bundModal").modal("show");
         });
 
         //输入框条件查询市场活动
-		$("#searchName").change(function () {
-			var actName = $.trim($("#actName").val());
-			bundActivity(actName);
+		$("#searchName").keydown(function (event) {
+			if(event.keyCode === 13){
+			    bundActivity($("#searchName").val());
+                return false;
+            }
 		});
 
         //关联市场活动
@@ -95,7 +97,6 @@ To change this template use File | Settings | File Templates.
 					dataType: "json",
 					success:function (result) {
                         if (result){
-                            alert("关联市场活动成功");
                             ajaxUpdateActivityList("${clue.id}");
                         }else {
                             alert("关联市场活动失败");
@@ -185,7 +186,7 @@ To change this template use File | Settings | File Templates.
 					<div class="btn-group" style="position: relative; top: 18%; left: 8px;">
 						<form class="form-inline" role="form">
 						  <div class="form-group has-feedback">
-						    <input type="text" class="form-control" id="actName" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
+						    <input type="text" class="form-control" id="searchName" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
 						    <span class="glyphicon glyphicon-search form-control-feedback"></span>
 						  </div>
 						</form>
@@ -381,7 +382,7 @@ To change this template use File | Settings | File Templates.
 			<h3>${clue.fullName}${clue.appellation} <small>${clue.company}</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
-			<button type="button" class="btn btn-default" onclick="window.location.href='convert.html';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
+			<button type="button" class="btn btn-default" onclick="window.location='workbench/clue/convert.jsp?id=${clue.id}&fullName=${clue.fullName}&appellation=${clue.appellation}&company=${clue.company}&owner=${clue.owner}';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
 			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>

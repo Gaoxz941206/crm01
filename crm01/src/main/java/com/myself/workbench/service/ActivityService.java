@@ -45,4 +45,11 @@ public interface ActivityService {
      * @return
      */
     String updateActivity(Activity activity, User user);
+
+    /**
+     * 根据市场活动名称模糊查询市场活动列表
+     * @param name
+     * @return
+     */
+    List<Activity> selectActivityByName(String name);
 }
