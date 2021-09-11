@@ -60,4 +60,11 @@ public interface ClueDao {
      * @return
      */
     int deleteActivity(String id);
+
+    /**
+     * 删除线索
+     * @param clueId
+     * @return
+     */
+    int deleteClue(String clueId);
 }

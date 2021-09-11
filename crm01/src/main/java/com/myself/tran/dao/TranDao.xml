@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myself.tran.dao.TranDao">
+
+    <sql id="tran">
+        id,owner,money,name,expectedDate,customerId,stage,type,source,activityId,contactsId,createBy,createTime,editBy,editTime,description,contactSummary,nextContactTime
+    </sql>
+
+    <insert id="insertTran" parameterType="Tran">
+        insert into tbl_tran (<include refid="tran" />) values
+        (#{id},#{owner},#{money},#{name},#{expectedDate},#{customerId},#{stage},#{type},#{source},#{activityId},#{contactsId},#{createBy},#{createTime},#{editBy},#{editTime},#{description},#{contactSummary},#{nextContactTime})
+    </insert>
+
+</mapper>

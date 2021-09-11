@@ -39,6 +39,11 @@
         delete from tbl_clue_activity_relation where id = #{id}
     </delete>
 
+    <!-- 删除线索 -->
+    <delete id="deleteClue">
+        delete from tbl_clue where id = #{clueId}
+    </delete>
+
     <!-- 添加查询总条数 -->
     <select id="getTotalSize" resultType="int">
         select count(id) from tbl_clue where 1 = 1

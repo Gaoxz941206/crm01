@@ -76,15 +76,48 @@ request.getContextPath()+"/";
 
         //点击转换按钮，将线索转换成客户
         $("#conversionBtn").click(function () {
+			var money = $.trim($("#amountOfMoney").val());
+			var name = $.trim($("#tradeName").val());
+			var expectedDate = $.trim($("#expectedClosingDate").val());
+			var stage = $.trim($("#stage").val());
+			var activityId = $.trim($("#actId").val());
+			var isCreateTran = false;
+			if($("#isCreateTransaction").prop("checked")){
+				if(money === "" || money === null){
+					alert("金额不能为空");
+				}else if(name === "" || name === null){
+					alert("交易名称不能为空");
+				}else if(expectedDate === "" || expectedDate === null){
+					alert("预计成交日期不能为空");
+				}else if(stage === "" || stage === null){
+					alert("阶段不能为空");
+				}else if(stage === "" || stage === null){
+					alert("阶段不能为空");
+				}
+				isCreateTran = true;
+			}
 			$.ajax({	//将线索转换成客户
-				url:"customer/addByClue",
-				data:{id:"${param.id}"},
+				url:"customer/addCustomerByClue",
+				data:{
+					isCreateTran:isCreateTran,
+					clueId:"${param.id}",
+					money:money,
+					name:name,
+					expectedDate:expectedDate,
+					stage:stage,
+					activityId:activityId
+				},
 				type: "post",
 				dataType: "json",
 				success:function (result) {
-
+					if(result){
+						alert(isCreateTran ? "线索转换成功，并已添加交易记录" : "线索转换成功");
+						document.location = "workbench/clue/index.jsp";
+					}else {
+						alert(isCreateTran ? "线索转换或添加交易记录失败" : "线索转换失败");
+					}
 				}
-			})
+			});
         });
 
 	});
@@ -183,7 +216,7 @@ request.getContextPath()+"/";
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="tradeName">交易名称</label>
-		    <input type="text" class="form-control" id="tradeName" value="动力节点-">
+		    <input type="text" class="form-control" id="tradeName">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="expectedClosingDate">预计成交日期</label>
