@@ -41,7 +41,7 @@
 
     <!-- 根据线索id和市场活动id删除关联关系 -->
     <delete id="deleteClueActivity">
-        delete from tbl_clue_activity_relation where cludId = #{clueId} and activityId = #{actId}
+        delete from tbl_clue_activity_relation where clueId = #{clueId} and activityId = #{actId}
     </delete>
 
     <!-- 删除线索 -->
