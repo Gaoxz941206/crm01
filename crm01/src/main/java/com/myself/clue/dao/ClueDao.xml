@@ -34,14 +34,24 @@
         insert into tbl_clue_activity_relation (id,clueId,activityId) values (#{id},#{clueId},#{activityId})
     </insert>
 
-    <!-- 解除线索和市场活动关联关系 -->
+    <!-- 根据线索_市场活动关联表中的id删除关联关系 -->
     <delete id="deleteActivity">
         delete from tbl_clue_activity_relation where id = #{id}
+    </delete>
+
+    <!-- 根据线索id和市场活动id删除关联关系 -->
+    <delete id="deleteClueActivity">
+        delete from tbl_clue_activity_relation where cludId = #{clueId} and activityId = #{actId}
     </delete>
 
     <!-- 删除线索 -->
     <delete id="deleteClue">
         delete from tbl_clue where id = #{clueId}
+    </delete>
+
+    <!-- 删除线索的备注 -->
+    <delete id="deleteClueRemark">
+        delete from tbl_clue_remark where clueId = #{clueId}
     </delete>
 
     <!-- 添加查询总条数 -->

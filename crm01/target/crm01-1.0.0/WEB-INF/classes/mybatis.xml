@@ -24,6 +24,7 @@
         <package name="com.myself.dic.entity"/>
         <package name="com.myself.customer.entity"/>
         <package name="com.myself.tran.entity"/>
+        <package name="com.myself.contacts.entity"/>
     </typeAliases>
 
     <mappers>
@@ -34,5 +35,6 @@
         <package name="com.myself.dic.dao"/>
         <package name="com.myself.customer.dao"/>
         <package name="com.myself.tran.dao"/>
+        <package name="com.myself.contacts.dao"/>
     </mappers>
 </configuration>

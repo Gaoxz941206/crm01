@@ -1,7 +1,9 @@
 package com.myself.customer.service;
 
+import com.myself.Utils.Page;
+import com.myself.customer.entity.Customer;
 import com.myself.tran.entity.Tran;
-import org.apache.ibatis.annotations.Param;
+import com.myself.vo.CustomerQueryParam;
 
 public interface CustomerService {
 
@@ -12,4 +14,11 @@ public interface CustomerService {
      * @return
      */
     Boolean addCustomerByClue(String name, String clueId, Boolean isCreateTran, Tran tran);
+
+    /**
+     * 条件分页查询
+     * @param param
+     * @return
+     */
+    Page<Customer> pageQuery(CustomerQueryParam param);
 }

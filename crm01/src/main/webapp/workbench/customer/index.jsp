@@ -1,27 +1,37 @@
 <%--
-Created by IntelliJ IDEA.
-User: gaoxz
-Date: 2021-08-28
-Time: 15:37
-To change this template use File | Settings | File Templates.
+  Created by IntelliJ IDEA.
+  User: gaoxz
+  Date: 2021-08-28
+  Time: 15:37
+  To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+	String path = request.getScheme()+"://"+
+				  request.getServerName()+":"+
+				  request.getServerPort()+
+				  request.getContextPath()+"/";
+
+%>
 <html>
 <head>
 <meta charset="UTF-8">
+<base href="<%=path%>">
+<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="../../jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
-
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
 
 	$(function(){
-		
+
+		//页面加载时查询客户列表
+		ajaxQueryCustomers(1,5);
+
 		//定制字段
 		$("#definedColumns > li").click(function(e) {
 			//防止下拉菜单消失
@@ -29,6 +39,50 @@ To change this template use File | Settings | File Templates.
 	    });
 		
 	});
+
+	//局部刷新条件分页查询客户列表
+	function ajaxQueryCustomers(pageNo,pageSize) {
+		var name = $.trim($("#queryName").val());
+		var owner = $.trim($("#queryOwner").val());
+		var phone = $.trim($("#queryPhone").val());
+		var website = $.trim($("#queryWebsite").val());
+		if(pageNo === "" || pageNo === null || parseInt(pageNo) <= 0){
+			pageNo = 1;
+		}
+		if(pageSize === "" || pageSize === null || parseInt(pageSize) <= 0){
+			pageSize = 5;
+		}
+		if(pageSize > 20){
+			pageSize = 20;
+		}
+		$.ajax({
+			url:"customer/pageQuery",
+			data:{
+				name:name,
+				owner:owner,
+				phone:phone,
+				website:website,
+				pageNo:pageNo,
+				pageSize:pageSize
+			},
+			type:"get",
+			dataType:"json",
+			success:function(result){
+                var htmlText = "";
+                $("#customerListBody").html(htmlText);
+                $.each(result.list,function (i,n) {
+					htmlText += '<tr>';
+					htmlText += 	'<td><input type="checkbox" /></td>';
+					htmlText += 	'<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/detail.jsp\';">'+n.name+'</a></td>';
+					htmlText += 	'<td>'+n.owner+'</td>';
+					htmlText += 	'<td>'+n.phone+'</td>';
+					htmlText += 	'<td>'+n.website+'</td>';
+					htmlText += '</tr>';
+				});
+                $("#customerListBody").html(htmlText);
+			}
+		})
+	}
 	
 </script>
 </head>
@@ -221,28 +275,28 @@ To change this template use File | Settings | File Templates.
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" id="queryName" type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" id="queryOwner" type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司座机</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" id="queryPhone" type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司网站</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" id="queryWebsite" type="text">
 				    </div>
 				  </div>
 				  
@@ -269,60 +323,24 @@ To change this template use File | Settings | File Templates.
 							<td>公司网站</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.jsp';">动力节点</a></td>
-							<td>zhangsan</td>
-							<td>010-84846003</td>
-							<td>http://www.bjpowernode.com</td>
-						</tr>
-                        <tr class="active">
-                            <td><input type="checkbox" /></td>
-                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.jsp';">动力节点</a></td>
-                            <td>zhangsan</td>
-                            <td>010-84846003</td>
-                            <td>http://www.bjpowernode.com</td>
-                        </tr>
+					<tbody id="customerListBody">
+
 					</tbody>
 				</table>
 			</div>
-			
-			<div style="height: 50px; position: relative;top: 30px;">
-				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
-				</div>
-				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
-					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
-					<div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-							10
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">20</a></li>
-							<li><a href="#">30</a></li>
-						</ul>
-					</div>
-					<button type="button" class="btn btn-default" style="cursor: default;">条/页</button>
-				</div>
-				<div style="position: relative;top: -88px; left: 285px;">
-					<nav>
-						<ul class="pagination">
-							<li class="disabled"><a href="#">首页</a></li>
-							<li class="disabled"><a href="#">上一页</a></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">4</a></li>
-							<li><a href="#">5</a></li>
-							<li><a href="#">下一页</a></li>
-							<li class="disabled"><a href="#">末页</a></li>
-						</ul>
-					</nav>
-				</div>
+
+			<div style="height: 50px; position: relative;top: 30px;" align="center">
+				第&nbsp;<span style="width: 30px" id="pageNoSpan"></span>&nbsp;页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				每页&nbsp;<input style="width: 30px" type="text" id="pageSize">&nbsp;条&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				共&nbsp;<span style="width: 30px" id="totalSizeSpan"></span> &nbsp;条记录&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				共&nbsp;<span style="width: 30px" id="totalPageSpan"></span> &nbsp;页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				跳转至第&nbsp;<input style="width: 30px" type="text" id="pageNo">&nbsp;页&nbsp;&nbsp;&nbsp;
+				<input type="button" id="goBtn" value="跳转">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<input type="button" id="firstBtn" value="首页" style="cursor: pointer">
+				<input type="button" id="perBtn" value="上一页" style="cursor: pointer">
+				<input type="button" id="nextBtn" value="下一页" style="cursor: pointer">
+				<input type="button" id="lastBtn" value="尾页" style="cursor: pointer">
 			</div>
-			
 		</div>
 		
 	</div>

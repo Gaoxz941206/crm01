@@ -1,14 +1,13 @@
 package com.myself.clue.dao;
 
+import com.myself.Utils.Page;
 import com.myself.clue.entity.Clue;
 import com.myself.clue.entity.Clue_Activity;
 import com.myself.vo.ClueQueryParam;
-import com.myself.workbench.entity.Activity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface ClueDao {
@@ -62,9 +61,25 @@ public interface ClueDao {
     int deleteActivity(String id);
 
     /**
+     * 根据线索_市场活动关联表中的id删除关联关系
+     * @param clueId    线索id
+     * @param actId     市场活动id
+     * @return
+     */
+    int deleteClueActivity(@Param("clueId")String clueId,
+                           @Param("actId")String actId);
+
+    /**
      * 删除线索
      * @param clueId
      * @return
      */
     int deleteClue(String clueId);
+
+    /**
+     * 删除线索的备注
+     * @param clueId
+     * @return
+     */
+    int deleteClueRemark(String clueId);
 }

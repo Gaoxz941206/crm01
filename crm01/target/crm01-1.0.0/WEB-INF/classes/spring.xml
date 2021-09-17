@@ -25,7 +25,8 @@
                                             com.myself.clue.dao,
                                             com.myself.dic.dao,
                                             com.myself.customer.dao,
-                                            com.myself.tran.dao"/>
+                                            com.myself.tran.dao,
+                                            com.myself.contacts.dao"/>
     </bean>
 
     <context:component-scan base-package="com.myself.settings.service.impl,
@@ -33,7 +34,8 @@
                                         com.myself.clue.service.impl,
                                         com.myself.dic.service.impl,
                                         com.myself.customer.service.impl,
-                                        com.myself.tran.service.impl" />
+                                        com.myself.tran.service.impl,
+                                        com.myself.contacts.service.impl" />
 
     <!-- 开启事务 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

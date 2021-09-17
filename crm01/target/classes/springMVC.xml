@@ -9,7 +9,8 @@
                                           com.myself.workbench.controller,
                                           com.myself.clue.controller,
                                           com.myself.customer.controller,
-                                          com.myself.tran.controller" />
+                                          com.myself.tran.controller,
+                                          com.myself.contacts.controller" />
     <context:component-scan base-package="com.myself.handler" />
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

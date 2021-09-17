@@ -18,6 +18,25 @@ public class Customer {
     public Customer() {
     }
 
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id='" + id + '\'' +
+                ", owner='" + owner + '\'' +
+                ", name='" + name + '\'' +
+                ", website='" + website + '\'' +
+                ", phone='" + phone + '\'' +
+                ", createBy='" + createBy + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", editBy='" + editBy + '\'' +
+                ", editTime='" + editTime + '\'' +
+                ", contactSummary='" + contactSummary + '\'' +
+                ", nextContactTime='" + nextContactTime + '\'' +
+                ", description='" + description + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
+
     public Customer(String id, String owner, String name, String website, String phone, String createBy, String createTime, String editBy, String editTime, String contactSummary, String nextContactTime, String description, String address) {
         this.id = id;
         this.owner = owner;

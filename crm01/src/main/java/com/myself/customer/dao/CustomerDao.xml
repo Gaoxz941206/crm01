@@ -16,4 +16,38 @@
         (#{id},#{owner},#{name},#{website},#{phone},#{createBy},#{createTime},#{editBy},#{editTime},#{contactSummary},#{nextContactTime},#{description},#{address});
     </insert>
 
+    <!-- 条件查询获取总记录条数 -->
+    <select id="getTotalSize" resultType="int">
+        select count(*) from tbl_customer where 1 = 1
+        <if test="name != null and name != ''">
+            and name like '%' #{name} '%'
+        </if>
+        <if test="owner != null and owner != ''">
+            and owner like '%' #{owner} '%'
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone like '%' #{phone} '%'
+        </if>
+        <if test="website != null and website != ''">
+            and website like '%' #{website} '%'
+        </if>
+    </select>
+
+    <!-- 条件分页查询 -->
+    <select id="selectCustomersPage" resultType="Customer">
+        select <include refid="customer" /> from tbl_customer where 1 = 1
+        <if test="name != null and name != ''">
+            and name like '%' #{name} '%'
+        </if>
+        <if test="owner != null and owner != ''">
+            and owner like '%' #{owner} '%'
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone like '%' #{phone} '%'
+        </if>
+        <if test="website != null and website != ''">
+            and website like '%' #{website} '%'
+        </if>
+        order by createTime desc limit #{pageNo},#{pageSize}
+    </select>
 </mapper>
