@@ -87,10 +87,26 @@ public class ActivityController {
         return service.updateActivity(activity,user);
     }
 
+    /**
+     * 根据市场活动名称查询市场活动
+     * @param name
+     * @return
+     */
     @RequestMapping(value = "/selectActivityByName",produces = "application/json;charset=utf-8")
     @ResponseBody
     public List<Activity> selectActivityByName(String name){
         List<Activity> list = service.selectActivityByName(name);
         return list;
+    }
+
+    /**
+     * 根据市场活动id查询市场活动
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/selectActivity",produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public Activity selectActivity(String id){
+        return service.selectActivity(id);
     }
 }

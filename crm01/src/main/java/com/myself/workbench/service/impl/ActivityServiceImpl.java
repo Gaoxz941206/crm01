@@ -135,4 +135,14 @@ public class ActivityServiceImpl implements ActivityService {
     public List<Activity> selectActivityByName(String name) {
         return dao.selectAllActivities_1(name);
     }
+
+    /**
+     * 根据市场活动id查询市场活动
+     * @param id
+     * @return
+     */
+    @Override
+    public Activity selectActivity(String id) {
+        return dao.selectActivityById(id);
+    }
 }

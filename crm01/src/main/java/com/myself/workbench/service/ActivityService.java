@@ -52,4 +52,11 @@ public interface ActivityService {
      * @return
      */
     List<Activity> selectActivityByName(String name);
+
+    /**
+     * 根据市场活动id查询市场活动
+     * @param id
+     * @return
+     */
+    Activity selectActivity(String id);
 }

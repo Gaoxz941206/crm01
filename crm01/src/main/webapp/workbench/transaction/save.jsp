@@ -25,6 +25,74 @@ request.getContextPath()+"/";
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
+	<script type="text/javascript">
+		$(function () {
+			//日期窗口
+			$(".time").datetimepicker({
+				minView:"month",
+				language:"zh-CN",
+				format:"yyyy-mm-dd",
+				autoclose:true,
+				todayBtn:true,
+				pickerPosition:"top-left"
+			});
+
+			//点击搜索按钮查询市场活动
+			$("#findActivityBtn").click(function () {
+				findActivity("");
+			});
+
+			//市场活动模态窗口中按名称查询市场活动列表
+			$("#activitySearch").keydown(function (event) {
+				if(event.keyCode === 13){
+					findActivity($.trim($("#activitySearch").val()));
+					return false;
+				}
+			});
+
+			//点击市场活动模态窗口中提交按钮将市场活动信息（名称、id）填入对应的栏中
+			$("#chooseActivityBtn").click(function(){
+				var id = $("input[name='activity']:checked").val();
+				$.ajax({
+					url:"activity/selectActivity",
+					data:{id:id},
+					type: "get",
+					dataType: "json",
+					success:function (result) {
+						$("#create-tranActivitySource").val(result.name);
+						$("#activityId").val(result.id);
+					}
+				})
+			})
+		});
+
+		//查询并展示市场活动列表
+		function findActivity(name) {
+			$.ajax({
+				url:"activity/selectActivityByName",
+				data:{name:name},
+				type:"get",
+				dataType:"json",
+				success:function (result) {
+					var htmlText = "";
+					$("#activityListBody").html(htmlText);
+					$.each(result,function (i,n) {
+						htmlText += '<tr>';
+						htmlText += '<td><input type="radio" value="'+n.id+'" name="activity"/></td>';
+						htmlText += '<td>'+n.name+'</td>';
+						htmlText += '<td>'+n.startDate+'</td>';
+						htmlText += '<td>'+n.endDate+'</td>';
+						htmlText += '<td>'+n.owner+'</td>';
+						htmlText += '</tr>';
+					});
+					$("#activityListBody").html(htmlText);
+				}
+			});
+			$("#findMarketActivity").modal("show");
+		}
+
+	</script>
+
 </head>
 <body>
 
@@ -42,7 +110,7 @@ request.getContextPath()+"/";
 					<div class="btn-group" style="position: relative; top: 18%; left: 8px;">
 						<form class="form-inline" role="form">
 						  <div class="form-group has-feedback">
-						    <input type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
+						    <input type="text" class="form-control" id="activitySearch" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
 						    <span class="glyphicon glyphicon-search form-control-feedback"></span>
 						  </div>
 						</form>
@@ -57,23 +125,14 @@ request.getContextPath()+"/";
 								<td>所有者</td>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td><input type="radio" name="activity"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
-							<tr>
-								<td><input type="radio" name="activity"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
+						<tbody id="activityListBody">
+
 						</tbody>
 					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<input type="button" class="btn btn-primary" data-dismiss="modal" id="chooseActivityBtn" value="提交">
 				</div>
 			</div>
 		</div>
@@ -109,13 +168,13 @@ request.getContextPath()+"/";
 						</thead>
 						<tbody>
 							<tr>
-								<td><input type="radio" name="activity"/></td>
+								<td><input type="radio" name="contacts"/></td>
 								<td>李四</td>
 								<td>lisi@bjpowernode.com</td>
 								<td>12345678901</td>
 							</tr>
 							<tr>
-								<td><input type="radio" name="activity"/></td>
+								<td><input type="radio" name="contacts"/></td>
 								<td>李四</td>
 								<td>lisi@bjpowernode.com</td>
 								<td>12345678901</td>
@@ -201,12 +260,13 @@ request.getContextPath()+"/";
 				<select class="form-control" id="create-tranClueSource">
 				  <option></option>
 				  <c:forEach items="${map.source}" var="list" varStatus="status">
-					  <option value="${list.value}">${list.text}<option>
+					  <option value="${list.value}">${list.text}</option>
 				  </c:forEach>
 				</select>
 			</div>
-			<label for="create-tranActivitySource" class="col-sm-2 control-label">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal" data-target="#findMarketActivity"><span class="glyphicon glyphicon-search"></span></a></label>
+			<label for="create-tranActivitySource" class="col-sm-2 control-label">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" id="findActivityBtn"><span class="glyphicon glyphicon-search"></span></a></label>
 			<div class="col-sm-10" style="width: 300px;">
+				<input type="hidden" id="activityId">
 				<input type="text" class="form-control" id="create-tranActivitySource">
 			</div>
 		</div>
