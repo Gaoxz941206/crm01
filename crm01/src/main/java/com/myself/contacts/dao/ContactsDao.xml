@@ -15,4 +15,17 @@
         (#{id},#{owner},#{source},#{customerId},#{fullName},#{appellation},#{email},#{mPhone},#{job},#{birth},#{createBy},#{createTime},#{editBy},#{editTime},#{description},#{contactSummary},#{nextContactTime},#{address})
     </insert>
 
+    <!-- 通过联系人姓名模糊查询联系人 -->
+    <select id="selectContactsByName" resultType="Contacts">
+        select <include refid="contacts" /> from tbl_contacts where 1 = 1
+        <if test="name != '' and name != null">
+            and fullName like '%' #{name} '%'
+        </if>
+    </select>
+
+    <!-- 通过id查询联系人 -->
+    <select id="selectContactsById" resultType="Contacts">
+        select <include refid="contacts" /> from tbl_contacts where id = #{id}
+    </select>
+
 </mapper>

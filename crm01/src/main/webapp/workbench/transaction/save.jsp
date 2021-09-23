@@ -37,7 +37,7 @@ request.getContextPath()+"/";
 				pickerPosition:"top-left"
 			});
 
-			//点击搜索按钮查询市场活动
+			//点击市场活动搜索按钮查询市场活动
 			$("#findActivityBtn").click(function () {
 				findActivity("");
 			});
@@ -61,6 +61,33 @@ request.getContextPath()+"/";
 					success:function (result) {
 						$("#create-tranActivitySource").val(result.name);
 						$("#activityId").val(result.id);
+					}
+				})
+			});
+
+			//点击联系人搜索按钮查询联系人
+			$("#findContactsBtn").click(function () {
+				findContacts("");
+			});
+
+			//点击输入框查询联系人
+			$("#ContactsSearch").keydown(function (event) {
+				if (event.keyCode === 13){
+					findContacts($.trim($("#ContactsSearch").val()));
+				}
+			});
+
+			//点击联系人模态窗口中提交按钮将联系人信息（名称、id）填入对应的栏中
+			$("#chooseContactsBtn").click(function () {
+				var id = $("input[name='contacts']:checked").val();
+				$.ajax({
+					url:"contacts/getContactsById",
+					data:{id:id},
+					type:"get",
+					dataType:"json",
+					success:function (result) {
+						$("#contactsId").val(result.id);
+						$("#create-tranContactsName").val(result.fullName);
 					}
 				})
 			})
@@ -90,6 +117,30 @@ request.getContextPath()+"/";
 			});
 			$("#findMarketActivity").modal("show");
 		}
+		
+		//查询并展示联系人列表
+        function findContacts(name) {
+            $.ajax({
+                url:"contacts/getContactsByName",
+                data:{name:name},
+                type:"get",
+                dataType:"json",
+                success:function(result){
+                    var htmlText = "";
+                    $("#contactsListBody").html(htmlText);
+                    $.each(result,function (i,n) {
+						htmlText += '<tr>';
+						htmlText += 	'<td><input type="radio" value="'+n.id+'" name="contacts"/></td>';
+						htmlText += 	'<td>'+n.fullName+'</td>';
+						htmlText += 	'<td>'+n.email+'</td>';
+						htmlText += 	'<td>'+n.mPhone+'</td>';
+						htmlText += '</tr>';
+					})
+					$("#contactsListBody").html(htmlText);
+                }
+            })
+			$("#findContacts").modal("show");
+        }
 
 	</script>
 
@@ -152,7 +203,7 @@ request.getContextPath()+"/";
 					<div class="btn-group" style="position: relative; top: 18%; left: 8px;">
 						<form class="form-inline" role="form">
 						  <div class="form-group has-feedback">
-						    <input type="text" class="form-control" style="width: 300px;" placeholder="请输入联系人名称，支持模糊查询">
+						    <input type="text" class="form-control" id="ContactsSearch" style="width: 300px;" placeholder="请输入联系人名称，支持模糊查询">
 						    <span class="glyphicon glyphicon-search form-control-feedback"></span>
 						  </div>
 						</form>
@@ -166,21 +217,14 @@ request.getContextPath()+"/";
 								<td>手机</td>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td><input type="radio" name="contacts"/></td>
-								<td>李四</td>
-								<td>lisi@bjpowernode.com</td>
-								<td>12345678901</td>
-							</tr>
-							<tr>
-								<td><input type="radio" name="contacts"/></td>
-								<td>李四</td>
-								<td>lisi@bjpowernode.com</td>
-								<td>12345678901</td>
-							</tr>
+						<tbody id="contactsListBody">
+
 						</tbody>
 					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<input type="button" class="btn btn-primary" data-dismiss="modal" id="chooseContactsBtn" value="提交">
 				</div>
 			</div>
 		</div>
@@ -195,11 +239,11 @@ request.getContextPath()+"/";
 		</div>
 		<hr style="position: relative; top: -40px;">
 	</div>
-	<form class="form-horizontal" role="form" style="position: relative; top: -30px;">
+	<form class="form-horizontal" id="tranForm" role="form" style="position: relative; top: -30px;">
 		<div class="form-group">
 			<label for="create-tranOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<select class="form-control" id="create-tranOwner">
+				<select class="form-control" id="create-tranOwner" name="owner">
 				  <c:forEach items="${userList}" var="tranUser" varStatus="status">
 					<option selected="${tranUser.id}===${sessionScope.user.id} ? 'selected' : ''" value="${tranUser.name}">${tranUser.name}</option>
 				  </c:forEach>
@@ -207,29 +251,30 @@ request.getContextPath()+"/";
 			</div>
 			<label for="create-tranMoney" class="col-sm-2 control-label">金额</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranMoney">
+				<input type="text" class="form-control" id="create-tranMoney" name="money">
 			</div>
 		</div>
 		
 		<div class="form-group">
 			<label for="create-tranName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranName">
+				<input type="text" class="form-control" id="create-tranName" name="name">
 			</div>
 			<label for="create-tranExpectedDate" class="col-sm-2 control-label">预计成交日期<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranExpectedDate">
+				<input type="text" class="form-control" id="create-tranExpectedDate" name="expectedDate">
 			</div>
 		</div>
 		
 		<div class="form-group">
 			<label for="create-tranCustomerName" class="col-sm-2 control-label">客户名称<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
+				<input type="hidden" id="customerId" name="customerId">
 				<input type="text" class="form-control" id="create-tranCustomerName" placeholder="支持自动补全，输入客户不存在则新建">
 			</div>
 			<label for="create-tranStage" class="col-sm-2 control-label">阶段<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-			  <select class="form-control" id="create-tranStage">
+			  <select class="form-control" id="create-tranStage" name="stage">
 			  	<option></option>
 				  <c:forEach items="${applicationScope.map.stage}" var="list" varStatus="status">
 					  <option value="${list.value}">${list.text}</option>
@@ -241,7 +286,7 @@ request.getContextPath()+"/";
 		<div class="form-group">
 			<label for="create-tranType" class="col-sm-2 control-label">类型</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<select class="form-control" id="create-tranType">
+				<select class="form-control" id="create-tranType" name="type">
 				  <option></option>
 				  <c:forEach items="${map.transactionType}" var="list" varStatus="status">
 					  <option value="${list.value}">${list.text}</option>
@@ -250,14 +295,14 @@ request.getContextPath()+"/";
 			</div>
 			<label for="create-tranPossibility" class="col-sm-2 control-label">可能性</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranPossibility">
+				<input type="text" class="form-control" id="create-tranPossibility" name="tranPossibility">
 			</div>
 		</div>
 		
 		<div class="form-group">
 			<label for="create-tranClueSource" class="col-sm-2 control-label">来源</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<select class="form-control" id="create-tranClueSource">
+				<select class="form-control" id="create-tranClueSource" name="source">
 				  <option></option>
 				  <c:forEach items="${map.source}" var="list" varStatus="status">
 					  <option value="${list.value}">${list.text}</option>
@@ -266,14 +311,15 @@ request.getContextPath()+"/";
 			</div>
 			<label for="create-tranActivitySource" class="col-sm-2 control-label">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" id="findActivityBtn"><span class="glyphicon glyphicon-search"></span></a></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="hidden" id="activityId">
+				<input type="hidden" id="activityId" name="activityId">
 				<input type="text" class="form-control" id="create-tranActivitySource">
 			</div>
 		</div>
 		
 		<div class="form-group">
-			<label for="create-tranContactsName" class="col-sm-2 control-label">联系人名称&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal" data-target="#findContacts"><span class="glyphicon glyphicon-search"></span></a></label>
+			<label for="create-tranContactsName" class="col-sm-2 control-label">联系人名称&nbsp;&nbsp;<a href="javascript:void(0);" id="findContactsBtn"><span class="glyphicon glyphicon-search"></span></a></label>
 			<div class="col-sm-10" style="width: 300px;">
+				<input type="hidden" id="contactsId" name="contactsId">
 				<input type="text" class="form-control" id="create-tranContactsName">
 			</div>
 		</div>
@@ -281,21 +327,21 @@ request.getContextPath()+"/";
 		<div class="form-group">
 			<label for="create-tranDescribe" class="col-sm-2 control-label">描述</label>
 			<div class="col-sm-10" style="width: 70%;">
-				<textarea class="form-control" rows="3" id="create-tranDescribe"></textarea>
+				<textarea class="form-control" rows="3" id="create-tranDescribe" name="description"></textarea>
 			</div>
 		</div>
 		
 		<div class="form-group">
 			<label for="create-tranContactSummary" class="col-sm-2 control-label">联系纪要</label>
 			<div class="col-sm-10" style="width: 70%;">
-				<textarea class="form-control" rows="3" id="create-tranContactSummary"></textarea>
+				<textarea class="form-control" rows="3" id="create-tranContactSummary" name="contactSummary"></textarea>
 			</div>
 		</div>
 		
 		<div class="form-group">
 			<label for="create-tranNextContactTime" class="col-sm-2 control-label">下次联系时间</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranNextContactTime">
+				<input type="text" class="form-control" id="create-tranNextContactTime" name="nextContactTime">
 			</div>
 		</div>
 		
