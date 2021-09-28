@@ -24,10 +24,17 @@ public interface ContactsDao {
     List<Contacts> selectContactsByName(@Param("name") String name);
 
     /**
-     * 通过联系人id查询联系人
+     * 通过联系人名称查询联系人
      * @param id
      * @return
      */
     Contacts selectContactsById(String id);
+
+    /**
+     * 通过联系人名称查询联系人
+     * @param name
+     * @return
+     */
+    Contacts getContactByName(String name);
 
 }

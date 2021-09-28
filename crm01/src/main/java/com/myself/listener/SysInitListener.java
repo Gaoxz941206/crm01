@@ -32,7 +32,7 @@ public class SysInitListener implements ServletContextListener {
         /*
             将配置文件中内容存入全局作用于中
          */
-        ResourceBundle bundle = ResourceBundle.getBundle("SysInitListenerTest");
+        ResourceBundle bundle = ResourceBundle.getBundle("StageToPossibility");
         Map<String,String> possibilityMap = new HashMap<>();
         Enumeration<String> keys = bundle.getKeys();
         while (keys.hasMoreElements()){

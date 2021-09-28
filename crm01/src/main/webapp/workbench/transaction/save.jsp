@@ -1,3 +1,5 @@
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.Set" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
 Created by IntelliJ IDEA.
@@ -8,10 +10,15 @@ To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-String path = request.getScheme()+"://"+
-request.getServerName()+":"+
-request.getServerPort()+
-request.getContextPath()+"/";
+	String path = request.getScheme()+"://"+
+				request.getServerName()+":"+
+				request.getServerPort()+
+				request.getContextPath()+"/";
+
+%>
+<%		//将全局作用域中的pMap转换成json格式
+	Map<String,String> pMap = (Map<String,String>)application.getAttribute("pMap");
+	Set<String> stringSet = pMap.keySet();
 %>
 <html>
 <head>
@@ -26,9 +33,31 @@ request.getContextPath()+"/";
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 	<script type="text/javascript">
+
+		//将pMap转换成json
+		var json = {
+			<%
+				for (String key : stringSet) {
+					String value = pMap.get(key);
+			%>
+					"<%=key%>":"<%=value%>",
+			<%
+				}
+			%>
+		};
+
 		$(function () {
 			//日期窗口
-			$(".time").datetimepicker({
+			$(".time1").datetimepicker({
+				minView:"month",
+				language:"zh-CN",
+				format:"yyyy-mm-dd",
+				autoclose:true,
+				todayBtn:true,
+				pickerPosition:"bottom-left"
+			});
+			//日期窗口
+			$(".time2").datetimepicker({
 				minView:"month",
 				language:"zh-CN",
 				format:"yyyy-mm-dd",
@@ -90,6 +119,50 @@ request.getContextPath()+"/";
 						$("#create-tranContactsName").val(result.fullName);
 					}
 				})
+			});
+
+			//当交易阶段变更时，可能性随着变
+			$("#create-tranStage").change(function () {
+				var tranStage = $("#create-tranStage").val();
+				if(tranStage !== null){
+				    $("#create-tranPossibility").val(json[tranStage]);
+				}
+			})
+
+			//ajax提交表单，添加交易
+			$("#addBtn").click(function () {
+				var owner = $.trim($("#create-tranOwner").val());
+				var money = $.trim($("#create-tranMoney").val());
+				var name = $.trim($("#create-tranName").val());
+				var expectedDate = $.trim($("#create-tranExpectedDate").val());
+				var contactsName = $.trim($("#create-tranContactsName").val());
+				var stage = $.trim($("#create-tranStage").val());
+				if(owner === "" || owner === null){
+					alert("所有者不能为空");
+				}else if(money === "" || money === null){
+					alert("金额不能为空");
+				}else if(name === "" || name === null){
+					alert("名称不能为空");
+				}
+				else if(expectedDate === "" || expectedDate === null){
+					alert("期望交易日期不能为空");
+				}
+				else if(contactsName === "" || contactsName === null){
+					alert("客户名称不能为空");
+				}else if(stage === "" || stage === null){
+					alert("阶段不能为空");
+				}else{
+					$.ajax({
+						url:"tran/insert",
+						data:$("#tranForm").serialize(),
+						type:"post",
+						dataType:"text",
+						success:function(result){
+							alert(result);
+							document.location = "workbench/transaction/index.jsp";
+						}
+					});
+				}
 			})
 		});
 
@@ -141,7 +214,6 @@ request.getContextPath()+"/";
             })
 			$("#findContacts").modal("show");
         }
-
 	</script>
 
 </head>
@@ -234,7 +306,7 @@ request.getContextPath()+"/";
 	<div style="position:  relative; left: 30px;">
 		<h3>创建交易</h3>
 	  	<div style="position: relative; top: -40px; left: 70%;">
-			<button type="button" class="btn btn-primary">保存</button>
+			<input type="button" id="addBtn" class="btn btn-primary" value="保存">
 			<button type="button" class="btn btn-default">取消</button>
 		</div>
 		<hr style="position: relative; top: -40px;">
@@ -245,7 +317,7 @@ request.getContextPath()+"/";
 			<div class="col-sm-10" style="width: 300px;">
 				<select class="form-control" id="create-tranOwner" name="owner">
 				  <c:forEach items="${userList}" var="tranUser" varStatus="status">
-					<option selected="${tranUser.id}===${sessionScope.user.id} ? 'selected' : ''" value="${tranUser.name}">${tranUser.name}</option>
+					<option ${tranUser.id == sessionScope.user.id ? 'selected' : ''} value="${tranUser.name}">${tranUser.name}</option>
 				  </c:forEach>
 				</select>
 			</div>
@@ -262,15 +334,14 @@ request.getContextPath()+"/";
 			</div>
 			<label for="create-tranExpectedDate" class="col-sm-2 control-label">预计成交日期<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranExpectedDate" name="expectedDate">
+				<input type="text" class="form-control time1" id="create-tranExpectedDate" name="expectedDate">
 			</div>
 		</div>
 		
 		<div class="form-group">
 			<label for="create-tranCustomerName" class="col-sm-2 control-label">客户名称<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="hidden" id="customerId" name="customerId">
-				<input type="text" class="form-control" id="create-tranCustomerName" placeholder="支持自动补全，输入客户不存在则新建">
+				<input type="text" class="form-control" id="create-tranCustomerName" name="customerName" placeholder="支持自动补全，输入客户不存在则新建">
 			</div>
 			<label for="create-tranStage" class="col-sm-2 control-label">阶段<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
@@ -295,7 +366,7 @@ request.getContextPath()+"/";
 			</div>
 			<label for="create-tranPossibility" class="col-sm-2 control-label">可能性</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranPossibility" name="tranPossibility">
+				<input type="text" class="form-control" id="create-tranPossibility">
 			</div>
 		</div>
 		
@@ -341,7 +412,7 @@ request.getContextPath()+"/";
 		<div class="form-group">
 			<label for="create-tranNextContactTime" class="col-sm-2 control-label">下次联系时间</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-tranNextContactTime" name="nextContactTime">
+				<input type="text" class="form-control time2" id="create-tranNextContactTime" name="nextContactTime">
 			</div>
 		</div>
 		

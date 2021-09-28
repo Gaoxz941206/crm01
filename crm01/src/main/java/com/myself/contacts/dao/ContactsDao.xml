@@ -28,4 +28,9 @@
         select <include refid="contacts" /> from tbl_contacts where id = #{id}
     </select>
 
+    <!-- 通过名称查询联系人 -->
+    <select id="getContactByName" resultType="Contacts">
+        select <include refid="contacts" /> from tbl_contacts where fullName = #{name}
+    </select>
+
 </mapper>

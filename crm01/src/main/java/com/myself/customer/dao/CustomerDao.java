@@ -29,4 +29,12 @@ public interface CustomerDao {
      * @return
      */
     List<Customer> selectCustomersPage(CustomerQueryParam param);
+
+    /**
+     * 根据客户名称查询客户
+     * @param name
+     * @return
+     */
+    Customer selectCustomerByName(String name);
+
 }

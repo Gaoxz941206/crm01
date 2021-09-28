@@ -37,12 +37,28 @@ To change this template use File | Settings | File Templates.
 			todayBtn:true,
 			pickerPosition:"top-left"
 		});
-		
-		
+
+		//页面加载时查询列表
+		ajaxQueryTran(1,5);
+
+		//点击按钮查询
+		$("#queryBtn").click(function () {
+			var pageNo = $.trim($("#pageNo").val());
+			var pageSize = $.trim($("#pageSize").val());
+			ajaxQueryTran(pageNo,pageSize);
+		});
+
 	});
 
 	//分页查询交易列表
 	function ajaxQueryTran(pageNo,pageSize) {
+		var owner = $.trim($("#queryOwner").val());
+		var name = $.trim($("#queryName").val());
+		var customerId = $.trim($("#queryCustomer").val());
+		var stage = $.trim($("#queryStage").val());
+		var type = $.trim($("#queryTranType").val());
+		var source = $.trim($("#querySource").val());
+		var contactsId = $.trim($("#queryContact").val());
 		if(pageNo === "" || pageNo === null || parseInt(pageNo) <= 0){
 			pageNo = 1;
 		}
@@ -52,17 +68,49 @@ To change this template use File | Settings | File Templates.
 		if(pageSize > 20){
 			pageSize = 20;
 		}
+		$.ajax({
+			url:"tran/pageQuery",
+			data:{
+				owner:owner,
+				name:name,
+				customerId:customerId,
+				stage:stage,
+				type:type,
+				source:source,
+				contactsId:contactsId,
+				pageNo:pageNo,
+				pageSize:pageSize,
+			},
+			type:"get",
+			dataType:"json",
+			success:function (result) {
+				var htmlText = "";
+				$("#tranListBody").html(htmlText);
+				$.each(result.list,function (i,n) {
+					htmlText += '<tr>';
+					htmlText += 	'<td><input type="checkbox" /></td>';
+					htmlText += 	'<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'tran/gotoDetail?id='+n.id+'\';">'+n.customerId+'-'+n.name+'</a></td>';
+					htmlText += 	'<td>'+n.customerId+'</td>';
+					htmlText += 	'<td>'+n.stage+'</td>';
+					htmlText += 	'<td>'+n.type+'</td>';
+					htmlText += 	'<td>'+n.owner+'</td>';
+					htmlText += 	'<td>'+n.source+'</td>';
+					htmlText += 	'<td>'+n.contactsId+'</td>';
+					htmlText += '</tr>';
+				});
+				$("#tranListBody").html(htmlText);
+				$("#pageNoSpan").html(result.pageNo);
+				$("#pageSize").val(result.pageSize);
+				$("#totalSizeSpan").html(result.totalSize);
+				var totalPage = (result.totalSize) % (result.pageSize) === 0 ?
+						parseInt(result.totalSize / result.pageSize) :
+						(parseInt(result.totalSize / result.pageSize) + 1);
+				$("#totalPageSpan").html(totalPage);
+			}
+		})
 
-		$("#pageNoSpan").html(result.pageNo);
-		$("#pageSize").val(result.pageSize);
-		$("#totalSizeSpan").html(result.totalSize);
-		var totalPage = (result.totalSize) % (result.pageSize) === 0 ?
-				parseInt(result.totalSize / result.pageSize) :
-				(parseInt(result.totalSize / result.pageSize) + 1);
-		$("#totalPageSpan").html(totalPage);
 	}
 
-	
 </script>
 </head>
 <body>
@@ -150,7 +198,7 @@ To change this template use File | Settings | File Templates.
 				    </div>
 				  </div>
 				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <input type="button" class="btn btn-default" id="queryBtn" value="查询">
 				  
 				</form>
 			</div>
@@ -177,27 +225,8 @@ To change this template use File | Settings | File Templates.
 							<td>联系人名称</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/transaction/detail.jsp';">动力节点-交易01</a></td>
-							<td>动力节点</td>
-							<td>谈判/复审</td>
-							<td>新业务</td>
-							<td>zhangsan</td>
-							<td>广告</td>
-							<td>李四</td>
-						</tr>
-                        <tr class="active">
-                            <td><input type="checkbox" /></td>
-                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/transaction/detail.jsp';">动力节点-交易01</a></td>
-                            <td>动力节点</td>
-                            <td>谈判/复审</td>
-                            <td>新业务</td>
-                            <td>zhangsan</td>
-                            <td>广告</td>
-                            <td>李四</td>
-                        </tr>
+					<tbody id="tranListBody">
+
 					</tbody>
 				</table>
 			</div>

@@ -16,6 +16,11 @@
         (#{id},#{owner},#{name},#{website},#{phone},#{createBy},#{createTime},#{editBy},#{editTime},#{contactSummary},#{nextContactTime},#{description},#{address});
     </insert>
 
+    <!-- 根据客户名称查询客户 -->
+    <select id="selectCustomerByName" resultType="Customer">
+        select <include refid="customer" /> from tbl_customer where name = #{name}
+    </select>
+
     <!-- 条件查询获取总记录条数 -->
     <select id="getTotalSize" resultType="int">
         select count(*) from tbl_customer where 1 = 1
