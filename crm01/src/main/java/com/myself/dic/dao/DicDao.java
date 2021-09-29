@@ -20,4 +20,6 @@ public interface DicDao {
      * @return
      */
     List<DicValue> selectValuesByTypeCode(String typeCode);
+
+
 }

@@ -86,9 +86,16 @@ public class TranController {
         return mav;
     }
 
+    /**
+     * 查询交易历史列表
+     * @param request
+     * @param tranId
+     * @return
+     */
     @RequestMapping(value = "/getHistoryList",produces = "application/json;charset=utf-8")
     @ResponseBody
     public List<TranHistoryPoss> getHistoryList(HttpServletRequest request, String tranId){
         return service.getTranHistoryList(request,tranId);
     }
+
 }

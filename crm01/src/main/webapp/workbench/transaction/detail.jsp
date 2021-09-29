@@ -1,6 +1,6 @@
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="java.util.Set" %><%--
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%--
 	Created by IntelliJ IDEA.
 	User: gaoxz
 	Date: 2021-08-28
@@ -84,19 +84,23 @@
             html: 'true',
             animation: false
         }).on("mouseenter", function () {
-                    var _this = this;
-                    $(this).popover("show");
-                    $(this).siblings(".popover").on("mouseleave", function () {
-                        $(_this).popover('hide');
-                    });
-                }).on("mouseleave", function () {
-                    var _this = this;
-                    setTimeout(function () {
-                        if (!$(".popover:hover").length) {
-                            $(_this).popover("hide")
-                        }
-                    }, 100);
-                });
+            var _this = this;
+            $(this).popover("show");
+            $(this).siblings(".popover").on("mouseleave", function () {
+                $(_this).popover('hide');
+            });
+        }).on("mouseleave", function () {
+            var _this = this;
+            setTimeout(function () {
+                if (!$(".popover:hover").length) {
+                    $(_this).popover("hide")
+                }
+            }, 100);
+        });
+
+		//局部刷新交易历史列表
+        ajaxQueryTranHistory();
+
 	});
 	
 	//页面加载完毕时，局部刷新查询交易历史列表
@@ -123,6 +127,7 @@
 			}
 		})
 	}
+
 	
 </script>
 
@@ -146,11 +151,19 @@
 	</div>
 
 	<!-- 阶段状态 -->
-	<div style="position: relative; left: 40px; top: -50px;">
+	<div style="position: relative; left: 40px; top: -50px;" id="stageList">
 		阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="资质审查" style="color: #90F790;"></span>
-		-----------
-		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="需求分析" style="color: #90F790;"></span>
+
+        <c:forEach items="${applicationScope.map.stage}" var="stage" varStatus="status">
+			<span <c:if test="${fn:substring(tran.stage,0,2) > fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-ok-circle mystage" style="color: #90F790;"</c:if>
+				  <c:if test="${fn:substring(tran.stage,0,2) == fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-map-marker mystage" style="color: #90F790;"</c:if>
+				  <c:if test="${fn:substring(tran.stage,0,2) < fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-record mystage"</c:if>
+				  data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+            <c:if test="${status.count < applicationScope.map.stage.size()}">
+				-----------
+            </c:if>
+        </c:forEach>
+		<%--<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="需求分析" style="color: #90F790;"></span>
 		-----------
 		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="价值建议" style="color: #90F790;"></span>
 		-----------
@@ -165,8 +178,8 @@
 		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="丢失的线索"></span>
 		-----------
 		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="因竞争丢失关闭"></span>
-		-----------
-		<span class="closingDate">2010-10-10</span>
+		-------------%>
+		<span class="closingDate">${tran.expectedDate}</span>
 	</div>
 	
 	<!-- 详细信息 -->
