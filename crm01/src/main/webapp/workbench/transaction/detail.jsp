@@ -128,6 +128,10 @@
 		})
 	}
 
+	//点击状态图标更改交易状态
+	function changeStage(stage) {
+		document.location = "tran/changeStage?tranId=${tran.id}&stage="+stage;
+	}
 	
 </script>
 
@@ -155,30 +159,40 @@
 		阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         <c:forEach items="${applicationScope.map.stage}" var="stage" varStatus="status">
-			<span <c:if test="${fn:substring(tran.stage,0,2) > fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-ok-circle mystage" style="color: #90F790;"</c:if>
-				  <c:if test="${fn:substring(tran.stage,0,2) == fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-map-marker mystage" style="color: #90F790;"</c:if>
-				  <c:if test="${fn:substring(tran.stage,0,2) < fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-record mystage"</c:if>
-				  data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+			<c:if test="${fn:substring(tran.stage,0,2) < 8}">
+				<span onclick="changeStage('${stage.text}')"
+						<c:if test="${fn:substring(tran.stage,0,2) > fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-ok-circle mystage" style="color: #90F790;"</c:if>
+						<c:if test="${fn:substring(tran.stage,0,2) == fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-map-marker mystage" style="color: #90F790;"</c:if>
+						<c:if test="${fn:substring(tran.stage,0,2) < fn:substring(stage.text,0,2) && status.count < 8}">class="glyphicon glyphicon-record mystage"</c:if>
+						<c:if test="${fn:substring(tran.stage,0,2) < fn:substring(stage.text,0,2) && status.count >= 8}">class="glyphicon glyphicon-remove mystage"</c:if>
+				data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+			</c:if>
+            <c:if test="${fn:substring(tran.stage,0,2) == 8}">
+                <c:if test="${status.count < fn:substring(tran.stage,0,2)}">
+                    <span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+                </c:if>
+				<c:if test="${status.count == fn:substring(tran.stage,0,2)}">
+					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" style="color: #FF0000;" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+				</c:if>
+				<c:if test="${status.count > fn:substring(tran.stage,0,2)}">
+					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+				</c:if>
+            </c:if>
+			<c:if test="${fn:substring(tran.stage,0,2) == 9}">
+				<c:if test="${status.count < 8}">
+					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+				</c:if>
+				<c:if test="${status.count == 8}">
+					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+				</c:if>
+				<c:if test="${status.count == fn:substring(tran.stage,0,2)}">
+					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" style="color: #FF0000;" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+				</c:if>
+			</c:if>
             <c:if test="${status.count < applicationScope.map.stage.size()}">
 				-----------
             </c:if>
         </c:forEach>
-		<%--<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="需求分析" style="color: #90F790;"></span>
-		-----------
-		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="价值建议" style="color: #90F790;"></span>
-		-----------
-		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="确定决策者" style="color: #90F790;"></span>
-		-----------
-		<span class="glyphicon glyphicon-map-marker mystage" data-toggle="popover" data-placement="bottom" data-content="提案/报价" style="color: #90F790;"></span>
-		-----------
-		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="谈判/复审"></span>
-		-----------
-		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="成交"></span>
-		-----------
-		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="丢失的线索"></span>
-		-----------
-		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="因竞争丢失关闭"></span>
-		-------------%>
 		<span class="closingDate">${tran.expectedDate}</span>
 	</div>
 	

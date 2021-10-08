@@ -24,7 +24,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 @Service
@@ -181,5 +180,43 @@ public class TranServiceImpl implements TranService {
             historyPoss.setPossibility(possibility);
         }
         return possList;
+    }
+
+    /**
+     * 点击交易状态图标，变更交易状态，添加交易历史
+     * @param user      更改人
+     * @param tranId    交易id
+     * @param stage     更改后状态
+     * @return
+     */
+    @Transactional(
+            propagation = Propagation.REQUIRED,
+            isolation = Isolation.DEFAULT,
+            readOnly = false,
+            timeout = -1,
+            rollbackFor = {RuntimeException.class}
+    )
+    @Override
+    public Tran changeStage(String user, String tranId, String stage) {
+
+        //首先更改交易状态
+        dao.changeStage(tranId,stage);
+
+        //查询根据id查询更改后的交易信息
+        Tran tran = dao.selectTranForName(tranId);
+
+        //添加交易历史
+        TranHistory history = new TranHistory();
+        history.setId(UUid.getUUID());
+        history.setCreateBy(user);
+        history.setCreateTime(TimeFormat.getCurrentAllTime());
+        history.setExpectedDate(tran.getExpectedDate());
+        history.setMoney(tran.getMoney());
+        history.setStage(tran.getStage());
+        history.setTranId(tranId);
+
+        dao.insertTranHistory(history);
+
+        return tran;
     }
 }

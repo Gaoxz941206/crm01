@@ -4,6 +4,7 @@ import com.myself.tran.entity.Tran;
 import com.myself.tran.entity.TranHistory;
 import com.myself.vo.TranHistoryPoss;
 import com.myself.vo.TranQueryParam;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,4 +53,13 @@ public interface TranDao {
      * @return
      */
     List<TranHistoryPoss> selectHistoryPossById(String tranId);
+
+    /**
+     * 更改交易状态
+     * @param tranId
+     * @param stage
+     * @return
+     */
+    int changeStage(@Param("tranId")String tranId,
+                    @Param("stage")String stage);
 }

@@ -1,19 +1,16 @@
 package com.myself.tran.controller;
 
 import com.myself.Utils.Page;
+import com.myself.settings.entity.User;
 import com.myself.settings.service.UserService;
 import com.myself.tran.entity.Tran;
-import com.myself.tran.entity.TranHistory;
 import com.myself.tran.service.TranService;
 import com.myself.vo.TranHistoryPoss;
 import com.myself.vo.TranQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
@@ -96,6 +93,15 @@ public class TranController {
     @ResponseBody
     public List<TranHistoryPoss> getHistoryList(HttpServletRequest request, String tranId){
         return service.getTranHistoryList(request,tranId);
+    }
+
+    @RequestMapping("/changeStage")
+    public ModelAndView changeStage(HttpSession sessions,String tranId,String stage){
+        String user = ((User)sessions.getAttribute("user")).getName();
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("tran",service.changeStage(user,tranId, stage));
+        mav.setViewName("workbench/transaction/detail");
+        return mav;
     }
 
 }

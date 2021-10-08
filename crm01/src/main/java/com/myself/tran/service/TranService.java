@@ -39,4 +39,13 @@ public interface TranService {
      * @return
      */
     List<TranHistoryPoss> getTranHistoryList(HttpServletRequest request, String tranId);
+
+    /**
+     * 点击交易状态图标，变更交易状态，添加交易历史
+     * @param user      更改人
+     * @param tranId    交易id
+     * @param stage     更改后状态
+     * @return
+     */
+    Tran changeStage(String user,String tranId,String stage);
 }
