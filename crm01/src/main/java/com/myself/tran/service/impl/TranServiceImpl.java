@@ -200,7 +200,7 @@ public class TranServiceImpl implements TranService {
     public Tran changeStage(String user, String tranId, String stage) {
 
         //首先更改交易状态
-        dao.changeStage(tranId,stage);
+        dao.changeStage(tranId,stage,user,TimeFormat.getCurrentAllTime());
 
         //查询根据id查询更改后的交易信息
         Tran tran = dao.selectTranForName(tranId);

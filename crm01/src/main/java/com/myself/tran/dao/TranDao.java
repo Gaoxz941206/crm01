@@ -61,5 +61,7 @@ public interface TranDao {
      * @return
      */
     int changeStage(@Param("tranId")String tranId,
-                    @Param("stage")String stage);
+                    @Param("stage")String stage,
+                    @Param("editBy")String editBy,
+                    @Param("editTime")String editTime);
 }

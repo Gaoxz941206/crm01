@@ -43,7 +43,7 @@
 
     <!-- 更改交易状态 -->
     <update id="changeStage">
-        update tbl_tran set stage = #{stage} where id = #{tranId}
+        update tbl_tran set stage = #{stage},editBy = #{editBy},editTime = #{editTime} where id = #{tranId}
     </update>
 
     <!-- 获取总记录条数 -->
