@@ -20,10 +20,12 @@ public class Tran {
     private String contactSummary;
     private String nextContactTime;
 
+    private String possibility;
+
     public Tran() {
     }
 
-    public Tran(String id, String owner, String money, String name, String expectedDate, String customerId, String stage, String type, String source, String activityId, String contactsId, String createBy, String createTime, String editBy, String editTime, String description, String contactSummary, String nextContactTime) {
+    public Tran(String id, String owner, String money, String name, String expectedDate, String customerId, String stage, String type, String source, String activityId, String contactsId, String createBy, String createTime, String editBy, String editTime, String description, String contactSummary, String nextContactTime, String possibility) {
         this.id = id;
         this.owner = owner;
         this.money = money;
@@ -42,6 +44,7 @@ public class Tran {
         this.description = description;
         this.contactSummary = contactSummary;
         this.nextContactTime = nextContactTime;
+        this.possibility = possibility;
     }
 
     public String getId() {
@@ -186,5 +189,13 @@ public class Tran {
 
     public void setNextContactTime(String nextContactTime) {
         this.nextContactTime = nextContactTime;
+    }
+
+    public String getPossibility() {
+        return possibility;
+    }
+
+    public void setPossibility(String possibility) {
+        this.possibility = possibility;
     }
 }

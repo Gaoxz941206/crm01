@@ -1,3 +1,6 @@
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.myself.dic.entity.DicValue" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%--
@@ -13,6 +16,10 @@
 				  request.getServerName()+":"+
 				  request.getServerPort()+
 				  request.getContextPath()+"/";
+%>
+<%
+	Map<String,List<DicValue>> map = (Map<String, List<DicValue>>) application.getAttribute("map");
+	List<DicValue> stageList = map.get("stage");
 %>
 <html>
 <head>
@@ -130,7 +137,76 @@
 
 	//点击状态图标更改交易状态
 	function changeStage(stage) {
-		document.location = "tran/changeStage?tranId=${tran.id}&stage="+stage;
+	    $.ajax({
+            url:"tran/changeStage",
+            data:{
+                id:"${tran.id}",
+                stage:stage,
+            },
+            type:"get",
+            dataType: "json",
+            success:function (tran) {
+				$("#stageB").html(tran.stage);
+				$("#possB").html(tran.possibility);
+				$("#editByB").html(tran.editBy);
+				$("#editTimeB").html(tran.editTime);
+                var curStage = parseInt(tran.stage.substring(1,2));
+				if(curStage !== 8 && curStage !== 9){
+					for (var i = 1; i < curStage; i++) {
+						$("#"+i).removeClass();
+						$("#"+i).addClass("glyphicon glyphicon-ok-circle mystage");
+						$("#"+i).css("color","#90F790");
+					}
+					$("#"+curStage).removeClass();
+					$("#"+curStage).addClass("glyphicon glyphicon-map-marker mystage");
+					$("#"+curStage).css("color","#90F790");
+					for (var i = curStage +1 ; i < 8; i++) {
+						$("#"+i).removeClass();
+						$("#"+i).addClass("glyphicon glyphicon-record mystage");
+						$("#"+i).css("color","#000000");
+					}
+					$("#8").removeClass();
+					$("#8").addClass("glyphicon glyphicon-remove mystage");
+					$("#8").css("color","#000000");
+
+					$("#9").removeClass();
+					$("#9").addClass("glyphicon glyphicon-remove mystage");
+					$("#9").css("color","#000000");
+
+				}
+				if (curStage === 8){
+					for (var i = 1; i < 8; i++) {
+						$("#"+i).removeClass();
+						$("#"+i).addClass("glyphicon glyphicon-record mystage");
+						$("#"+i).css("color","#000000");
+					}
+					$("#8").removeClass();
+					$("#8").addClass("glyphicon glyphicon-remove mystage");
+					$("#8").css("color","#FF0000");
+
+					$("#9").removeClass();
+					$("#9").addClass("glyphicon glyphicon-remove mystage");
+					$("#9").css("color","#000000");
+				}
+				if (curStage === 9){
+					for (var i = 1; i < 8; i++) {
+						$("#"+i).removeClass();
+						$("#"+i).addClass("glyphicon glyphicon-record mystage");
+						$("#"+i).css("color","#000000");
+					}
+					$("#8").removeClass();
+					$("#8").addClass("glyphicon glyphicon-remove mystage");
+					$("#8").css("color","#000000");
+
+					$("#9").removeClass();
+					$("#9").addClass("glyphicon glyphicon-remove mystage");
+					$("#9").css("color","#FF0000");
+				}
+
+                //刷新历史列表
+                ajaxQueryTranHistory();
+            }
+        });
 	}
 	
 </script>
@@ -155,12 +231,12 @@
 	</div>
 
 	<!-- 阶段状态 -->
-	<div style="position: relative; left: 40px; top: -50px;" id="stageList">
+	<div style="position: relative; left: 40px; top: -50px;" id="stageList" id="stageDiv">
 		阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         <c:forEach items="${applicationScope.map.stage}" var="stage" varStatus="status">
 			<c:if test="${fn:substring(tran.stage,0,2) < 8}">
-				<span onclick="changeStage('${stage.text}')"
+				<span id="${status.count}" onclick="changeStage('${stage.text}')"
 						<c:if test="${fn:substring(tran.stage,0,2) > fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-ok-circle mystage" style="color: #90F790;"</c:if>
 						<c:if test="${fn:substring(tran.stage,0,2) == fn:substring(stage.text,0,2)}">class="glyphicon glyphicon-map-marker mystage" style="color: #90F790;"</c:if>
 						<c:if test="${fn:substring(tran.stage,0,2) < fn:substring(stage.text,0,2) && status.count < 8}">class="glyphicon glyphicon-record mystage"</c:if>
@@ -169,24 +245,24 @@
 			</c:if>
             <c:if test="${fn:substring(tran.stage,0,2) == 8}">
                 <c:if test="${status.count < fn:substring(tran.stage,0,2)}">
-                    <span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+                    <span id="${status.count}" onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
                 </c:if>
 				<c:if test="${status.count == fn:substring(tran.stage,0,2)}">
-					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" style="color: #FF0000;" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+					<span id="${status.count}" onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" style="color: #FF0000;" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
 				</c:if>
 				<c:if test="${status.count > fn:substring(tran.stage,0,2)}">
-					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+					<span id="${status.count}" onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
 				</c:if>
             </c:if>
 			<c:if test="${fn:substring(tran.stage,0,2) == 9}">
 				<c:if test="${status.count < 8}">
-					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+					<span id="${status.count}" onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
 				</c:if>
 				<c:if test="${status.count == 8}">
-					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+					<span id="${status.count}" onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
 				</c:if>
 				<c:if test="${status.count == fn:substring(tran.stage,0,2)}">
-					<span onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" style="color: #FF0000;" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
+					<span id="${status.count}" onclick="changeStage('${stage.text}')" class="glyphicon glyphicon-remove mystage" style="color: #FF0000;" data-toggle="popover" data-placement="bottom" data-content="${stage.text}"></span>
 				</c:if>
 			</c:if>
             <c:if test="${status.count < applicationScope.map.stage.size()}">
@@ -218,7 +294,7 @@
 			<div style="width: 300px; color: gray;">客户名称</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${tran.customerId}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">阶段</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${tran.stage}</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="stageB">${tran.stage}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
@@ -226,7 +302,7 @@
 			<div style="width: 300px; color: gray;">类型</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${tran.type}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">可能性</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${possibility}</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="possB">${possibility}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
@@ -250,7 +326,7 @@
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 70px;">
 			<div style="width: 300px; color: gray;">修改者</div>
-			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>${tran.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">${tran.editTime}</small></div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b id="editByB">${tran.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;" id="editTimeB">${tran.editTime}</small></div>
 			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 80px;">

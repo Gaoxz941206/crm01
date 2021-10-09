@@ -96,12 +96,14 @@ public class TranController {
     }
 
     @RequestMapping("/changeStage")
-    public ModelAndView changeStage(HttpSession sessions,String tranId,String stage){
+    @ResponseBody
+    public Tran changeStage(HttpSession sessions,HttpServletRequest request,String id,String stage){
         String user = ((User)sessions.getAttribute("user")).getName();
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("tran",service.changeStage(user,tranId, stage));
-        mav.setViewName("workbench/transaction/detail");
-        return mav;
+        ServletContext context = request.getServletContext();
+        Map<String,String> pMap = (Map<String, String>) context.getAttribute("pMap");
+        Tran tran = service.changeStage(user,id, stage);
+        tran.setPossibility(pMap.get(tran.getStage()));
+        return tran;
     }
 
 }
