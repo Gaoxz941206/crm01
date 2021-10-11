@@ -46,6 +46,16 @@
         update tbl_tran set stage = #{stage},editBy = #{editBy},editTime = #{editTime} where id = #{tranId}
     </update>
 
+    <!-- 无条件获取交易总数量 -->
+    <select id="selectAllTranCount" resultType="int">
+        select count(*) from tbl_tran
+    </select>
+
+    <!-- 无条件按照阶段分组查询 -->
+    <select id="selectTranGroupByStage" resultType="java.util.Map">
+        select stage as name ,count(*) as value from tbl_tran group by stage
+    </select>
+
     <!-- 获取总记录条数 -->
     <select id="selectTotalSize" resultType="int">
         select count(*) from tbl_tran where 1 = 1

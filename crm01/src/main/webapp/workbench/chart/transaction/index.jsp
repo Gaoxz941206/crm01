@@ -28,65 +28,68 @@
 
         function getEcharts() {
 
-            //基于准备好的DOM，初始化echarts示例
-            var myChart = echarts.init(document.getElementById("main"));
+            //ajax查询
+            $.ajax({
+               url:"tran/echarts",
+               type:"get",
+               dataType:"json",
+               success:function (result) {
+                   //基于准备好的DOM，初始化echarts示例
+                   var myChart = echarts.init(document.getElementById("main"));
 
-            // 指定图表的配置项和数据
-            var option = {
-                title: {
-                    text: '交易阶段漏斗统计图'
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{a} <br/>{b} : {c}%'
-                },
-                series: [
-                    {
-                        name: '交易阶段统计图',
-                        type: 'funnel',
-                        left: '10%',
-                        top: 60,
-                        bottom: 60,
-                        width: '80%',
-                        min: 0,
-                        max: 100,
-                        minSize: '0%',
-                        maxSize: '100%',
-                        sort: 'descending',
-                        gap: 2,
-                        label: {
-                            show: true,
-                            position: 'inside'
-                        },
-                        labelLine: {
-                            length: 10,
-                            lineStyle: {
-                                width: 1,
-                                type: 'solid'
-                            }
-                        },
-                        itemStyle: {
-                            borderColor: '#fff',
-                            borderWidth: 1
-                        },
-                        emphasis: {
-                            label: {
-                                fontSize: 20
-                            }
-                        },
-                        data: [
-                            { value: 60, name: 'Visit' },
-                            { value: 40, name: 'Inquiry' },
-                            { value: 20, name: 'Order' },
-                            { value: 80, name: 'Click' },
-                            { value: 100, name: 'Show' }
-                        ]
-                    }
-                ]
-            };
+                   // 指定图表的配置项和数据
+                   var option = {
+                       title: {
+                           text: '交易阶段漏斗统计图'
+                       },
+                       tooltip: {
+                           trigger: 'item',
+                           formatter: '{a} <br/>{b} : {c}%'
+                       },
+                       series: [
+                           {
+                               name: '交易阶段统计图',
+                               type: 'funnel',
+                               left: '10%',
+                               top: 60,
+                               bottom: 60,
+                               width: '80%',
+                               min: 0,
+                               max: result.total,
+                               minSize: '0%',
+                               maxSize: '100%',
+                               sort: 'descending',
+                               gap: 2,
+                               label: {
+                                   show: true,
+                                   position: 'inside'
+                               },
+                               labelLine: {
+                                   length: 10,
+                                   lineStyle: {
+                                       width: 1,
+                                       type: 'solid'
+                                   }
+                               },
+                               itemStyle: {
+                                   borderColor: '#fff',
+                                   borderWidth: 1
+                               },
+                               emphasis: {
+                                   label: {
+                                       fontSize: 20
+                                   }
+                               },
+                               data: result.tran,
+                           }
+                       ]
+                   };
 
-            // 使用刚指定的配置项和数据显示图表(画图)。
-            myChart.setOption(option);
+                   // 使用刚指定的配置项和数据显示图表(画图)。
+                   myChart.setOption(option);
+               }
+            });
+
         }
         
     </script>

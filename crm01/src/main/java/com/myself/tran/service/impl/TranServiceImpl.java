@@ -23,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TranServiceImpl implements TranService {
@@ -218,5 +217,26 @@ public class TranServiceImpl implements TranService {
         dao.insertTranHistory(history);
 
         return tran;
+    }
+
+    /**
+     * 交易阶段统计
+     * @return
+     */
+    @Override
+    public Map<Object, Object> getEcharts() {
+
+        Map<Object,Object> map = new HashMap<>();
+
+        //获取交易总数量
+        int total = dao.selectAllTranCount();
+
+        //分组查询交易
+        List<Map<String,Integer>> dataList = dao.selectTranGroupByStage();
+
+        map.put("total",total);
+        map.put("tran",dataList);
+
+        return map;
     }
 }

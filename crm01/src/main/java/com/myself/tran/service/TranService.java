@@ -8,6 +8,7 @@ import com.myself.vo.TranQueryParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 
 public interface TranService {
 
@@ -48,4 +49,10 @@ public interface TranService {
      * @return
      */
     Tran changeStage(String user,String tranId,String stage);
+
+    /**
+     * 交易阶段统计
+     * @return
+     */
+    Map<Object, Object> getEcharts();
 }

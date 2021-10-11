@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface TranDao {
@@ -64,4 +65,16 @@ public interface TranDao {
                     @Param("stage")String stage,
                     @Param("editBy")String editBy,
                     @Param("editTime")String editTime);
+
+    /**
+     * 无条件获取所有交易数量
+     * @return
+     */
+    int selectAllTranCount();
+
+    /**
+     * 无条件按照阶段分组查询交易
+     * @return
+     */
+    List<Map<String,Integer>> selectTranGroupByStage();
 }

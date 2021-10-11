@@ -95,6 +95,14 @@ public class TranController {
         return service.getTranHistoryList(request,tranId);
     }
 
+    /**
+     * 动态变更阶段和图标
+      * @param sessions
+     * @param request
+     * @param id
+     * @param stage
+     * @return
+     */
     @RequestMapping("/changeStage")
     @ResponseBody
     public Tran changeStage(HttpSession sessions,HttpServletRequest request,String id,String stage){
@@ -106,4 +114,12 @@ public class TranController {
         return tran;
     }
 
+    /**
+     * 交易阶段统计图
+     * @return
+     */
+    @RequestMapping("/echarts")
+    public @ResponseBody Map<Object,Object> getEcharts(){
+        return service.getEcharts();
+    }
 }
